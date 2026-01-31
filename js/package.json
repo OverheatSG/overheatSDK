@@ -1,0 +1,22 @@
+{
+  "name": "overheat-sdk",
+  "version": "1.0.0",
+  "description": "Overheat SDK for Solana",
+  "main": "index.js",
+  "scripts": {
+    "get-all-questions": "ts-node get_all_questions.ts",
+    "register-question": "ts-node register_question.ts"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.30.0",
+    "@solana/web3.js": "^1.87.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

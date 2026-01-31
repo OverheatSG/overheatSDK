@@ -1,0 +1,142 @@
+{
+  "address": "3tzMsaazCNbbL4Qd2qnQGVEjm4eDLo85yL2J3NpuxCsb",
+  "metadata": {
+    "name": "overheat",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "register_question",
+      "docs": [
+        "Register a new question"
+      ],
+      "discriminator": [
+        85,
+        24,
+        110,
+        154,
+        208,
+        91,
+        3,
+        75
+      ],
+      "accounts": [
+        {
+          "name": "question",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "question_text",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "update_answer",
+      "docs": [
+        "Update the answer for a question (yes/no)"
+      ],
+      "discriminator": [
+        172,
+        127,
+        30,
+        84,
+        31,
+        208,
+        56,
+        16
+      ],
+      "accounts": [
+        {
+          "name": "question",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "answer",
+          "type": "bool"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Question",
+      "discriminator": [
+        111,
+        22,
+        150,
+        220,
+        181,
+        122,
+        118,
+        127
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized to update this question"
+    },
+    {
+      "code": 6001,
+      "name": "QuestionTooLong",
+      "msg": "Question text too long"
+    }
+  ],
+  "types": [
+    {
+      "name": "Question",
+      "docs": [
+        "Question account structure"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "question_text",
+            "type": "string"
+          },
+          {
+            "name": "answer",
+            "type": {
+              "option": "bool"
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "updated_at",
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ]
+}
