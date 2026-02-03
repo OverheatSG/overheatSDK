@@ -25,9 +25,16 @@ export interface RegisterQuestionResult {
 }
 
 export async function registerQuestion(
-  questionText: string,
+  category: string,
+  expectedExpirationTime: number,
+  latestExpirationTime: number,
+  question: string,
   walletPath: string
 ): Promise<RegisterQuestionResult> {
+  const expectedExpirationTimeStr = new Date(expectedExpirationTime * 1000).toISOString();
+  const latestExpirationTimeStr = new Date(latestExpirationTime * 1000).toISOString();
+  const questionText = `${category} | ${expectedExpirationTimeStr} | ${latestExpirationTimeStr} | ${question}`;
+  
   const connection = new anchor.web3.Connection(RPC_URL, "confirmed");
   const walletKeypair = anchor.web3.Keypair.fromSecretKey(
     Buffer.from(JSON.parse(fs.readFileSync(walletPath, "utf8")) as number[])
@@ -88,17 +95,26 @@ export async function registerQuestion(
 
 if (require.main === module) {
   const args = process.argv.slice(2);
-  if (args.length < 1) {
-    console.error("Usage: register_question.ts <question_text> [wallet_path]");
+  if (args.length < 4) {
+    console.error("Usage: register_question.ts <category> <expected_expiration_timestamp> <latest_expiration_timestamp> <question> [wallet_path]");
+    console.error("Example: register_question.ts 'Crypto' 1704583500 1704063000 'SOL Up or Down - 15 minutes - Jan 30 - 6:30PM EST to 6:45PM EST'");
     process.exit(1);
   }
 
-  const questionText = args[0];
+  const category = args[0];
+  const expectedExpirationTime = parseInt(args[1], 10);
+  const latestExpirationTime = parseInt(args[2], 10);
+  const question = args[3];
   const walletPath = expandPath(
-    args[1] || process.env.ANCHOR_WALLET || "~/.config/solana/id.json"
+    args[4] || process.env.ANCHOR_WALLET || "~/.config/solana/id.json"
   );
 
-  registerQuestion(questionText, walletPath)
+  if (isNaN(expectedExpirationTime) || isNaN(latestExpirationTime)) {
+    console.error("Error: expected_expiration_timestamp and latest_expiration_timestamp must be valid numbers (Unix timestamps)");
+    process.exit(1);
+  }
+
+  registerQuestion(category, expectedExpirationTime, latestExpirationTime, question, walletPath)
     .then(() => process.exit(0))
     .catch((error) => {
       console.error("Error:", error);

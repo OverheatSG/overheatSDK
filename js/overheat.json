@@ -1,5 +1,5 @@
 {
-  "address": "3tzMsaazCNbbL4Qd2qnQGVEjm4eDLo85yL2J3NpuxCsb",
+  "address": "Hq6VMBpDmhDhvhHCXb254A1qetsRuvUhDgua2KsYVEmY",
   "metadata": {
     "name": "overheat",
     "version": "0.1.0",
@@ -118,8 +118,12 @@
             "type": "pubkey"
           },
           {
-            "name": "question_text",
-            "type": "string"
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "updated_at",
+            "type": "i64"
           },
           {
             "name": "answer",
@@ -128,12 +132,8 @@
             }
           },
           {
-            "name": "created_at",
-            "type": "i64"
-          },
-          {
-            "name": "updated_at",
-            "type": "i64"
+            "name": "question_text",
+            "type": "string"
           }
         ]
       }
