@@ -83,7 +83,10 @@ if (require.main === module) {
         console.log("No questions found.");
       } else {
         questions.forEach((q, index) => {
-          console.log(`[${index + 1}] ${q.questionText} - ${q.answer || "Not answered"}`);
+          console.log(`[${index + 1}]`);
+          console.log(`  Address: ${q.address}`);
+          console.log(`  Question: ${q.questionText}`);
+          console.log(`  Answer: ${q.answer || "Not answered"}`);
         });
         console.log(`\nTotal: ${questions.length} question(s)`);
       }
