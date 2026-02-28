@@ -75,11 +75,3 @@ Example:
 npx ts-node update_answer.ts 3W7ST5htXbXZtDpTaYuNZQ1Fe3bU9reffTvV4NGqE7J7 false 'Additional information'
 
 ```
-
-## Program ID
-
-The program ID is: `DaNnfEFa6KFS4W1ZRDHHcMiBJFH2qUtxib8o75eVSKJP`
-
-## RPC URL
-
-Default RPC URL: `https://api.zan.top/node/v1/solana/devnet/85f8917431284c59abfeaeb2e32a0d87`
