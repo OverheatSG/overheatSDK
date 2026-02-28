@@ -1,5 +1,5 @@
 {
-  "address": "Hq6VMBpDmhDhvhHCXb254A1qetsRuvUhDgua2KsYVEmY",
+  "address": "9WB2rbUAVmxdnXJY4abE588LuHnqWibZYVpx5LwgN8wo",
   "metadata": {
     "name": "overheat",
     "version": "0.1.0",
@@ -41,6 +41,22 @@
         {
           "name": "question_text",
           "type": "string"
+        },
+        {
+          "name": "expected_expiration_time",
+          "type": "i64"
+        },
+        {
+          "name": "latest_expiration_time",
+          "type": "i64"
+        },
+        {
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "name": "arweave_id",
+          "type": "bytes"
         }
       ]
     },
@@ -73,6 +89,10 @@
         {
           "name": "answer",
           "type": "bool"
+        },
+        {
+          "name": "extension",
+          "type": "string"
         }
       ]
     }
@@ -118,11 +138,11 @@
             "type": "pubkey"
           },
           {
-            "name": "created_at",
+            "name": "expected_expiration_time",
             "type": "i64"
           },
           {
-            "name": "updated_at",
+            "name": "latest_expiration_time",
             "type": "i64"
           },
           {
@@ -133,7 +153,39 @@
           },
           {
             "name": "question_text",
-            "type": "string"
+            "type": {
+              "array": [
+                "u8",
+                500
+              ]
+            }
+          },
+          {
+            "name": "category",
+            "type": {
+              "array": [
+                "u8",
+                100
+              ]
+            }
+          },
+          {
+            "name": "extension",
+            "type": {
+              "array": [
+                "u8",
+                200
+              ]
+            }
+          },
+          {
+            "name": "arweave_id",
+            "type": {
+              "array": [
+                "u8",
+                44
+              ]
+            }
           }
         ]
       }
