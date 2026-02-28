@@ -1,6 +1,6 @@
 import { Keypair } from "@solana/web3.js";
 import Irys from "@irys/sdk";
-import { RPC_URL, IRYS_NODE, IRYS_GATEWAY } from "../lib/config";
+import { getConfig } from "../lib/config";
 
 export interface QuestionDescription {
   questionText: string;
@@ -21,7 +21,8 @@ export interface ArweaveUploadResult {
 export async function fetchQuestionFromArweave(
   transactionId: string
 ): Promise<QuestionDescription> {
-  const irysUrl = `${IRYS_GATEWAY}/${transactionId}`;
+  const config = getConfig();
+  const irysUrl = `${config.irysGateway}/${transactionId}`;
   const response = await fetch(irysUrl, {
     signal: AbortSignal.timeout(10000),
   });
@@ -52,6 +53,7 @@ export async function uploadQuestionToArweave(
   },
   walletKeypair: Keypair
 ): Promise<ArweaveUploadResult> {
+  const config = getConfig();
   const description: QuestionDescription = {
     questionText: questionData.questionText,
     rule: questionData.rule,
@@ -61,11 +63,11 @@ export async function uploadQuestionToArweave(
   const dataBuffer = Buffer.from(data, "utf8");
 
   const irys = new Irys({
-    url: IRYS_NODE,
+    url: config.irysNode,
     token: "solana",
     key: walletKeypair.secretKey,
     config: {
-      providerUrl: RPC_URL,
+      providerUrl: config.rpcUrl,
     },
   });
 
@@ -86,7 +88,7 @@ export async function uploadQuestionToArweave(
     throw new Error(`Invalid Arweave ID length: ${fullId.length} (expected 43 or 44). ID: "${fullId}"`);
   }
 
-  const gatewayUrl = `${IRYS_GATEWAY}/${fullId}`;
+  const gatewayUrl = `${config.irysGateway}/${fullId}`;
 
   return {
     transactionId: fullId,

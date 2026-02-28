@@ -1,4 +1,43 @@
 {
+  "name": "overheat-sdk",
+  "version": "0.1.0",
+  "description": "Solana SDK for interacting with the Overheat program",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "lib/overheat-devnet.json",
+    "README.md",
+    "LICENSE",
+    "example"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "solana",
+    "anchor",
+    "sdk",
+    "overheat",
+    "blockchain",
+    "oracle"
+  ],
+  "author": "OverheatSG",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OverheatSG/overheatSDK.git",
+    "directory": "js"
+  },
+  "bugs": {
+    "url": "https://github.com/OverheatSG/overheatSDK/issues"
+  },
+  "homepage": "https://github.com/OverheatSG/overheatSDK#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.0",
     "@irys/sdk": "^0.2.11",

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { getAllQuestions } from "./lib/get_all_questions";
+import { getAllQuestions } from "../lib/get_all_questions";
 
 if (require.main === module) {
   getAllQuestions()

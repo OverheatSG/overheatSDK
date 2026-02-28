@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import * as os from "os";
-import { expandPath, loadWallet } from "./utils/wallet";
-import { registerQuestion, RegisterQuestionParams } from "./lib/register_question";
+import { expandPath, loadWallet } from "../utils/wallet";
+import { registerQuestion, RegisterQuestionParams } from "../lib/register_question";
 
 if (require.main === module) {
   const args = process.argv.slice(2);

@@ -1,20 +1,19 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Connection } from "@solana/web3.js";
-import * as fs from "fs";
-import * as path from "path";
 import {
   QuestionInfo,
   decodeBytesToString,
+  getIdl,
 } from "./types";
-import { RPC_URL, WS_URL } from "./config";
-
-const idlPath = path.join(__dirname, "overheat.json");
-const idl = JSON.parse(fs.readFileSync(idlPath, "utf8"));
+import { getConfig } from "./config";
 
 export async function getAllQuestions(): Promise<QuestionInfo[]> {
-  const connection = new Connection(RPC_URL, {
+  const config = getConfig();
+  const idl = getIdl();
+  
+  const connection = new Connection(config.rpcUrl, {
     commitment: "confirmed",
-    wsEndpoint: WS_URL,
+    wsEndpoint: config.wsUrl,
   });
   const provider = new anchor.AnchorProvider(
     connection,

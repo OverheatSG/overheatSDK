@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { getQuestionByAddress } from "./lib/get_question_by_address";
+import { getQuestionByAddress } from "../lib/get_question_by_address";
 
 if (require.main === module) {
   const args = process.argv.slice(2);

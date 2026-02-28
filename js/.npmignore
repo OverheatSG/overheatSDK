@@ -1,0 +1,9 @@
+node_modules/
+*.ts
+!lib/**/*.ts
+!utils/**/*.ts
+!index.ts
+!example/**/*.ts
+tsconfig.json
+.git
+.gitignore

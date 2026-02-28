@@ -1,14 +1,9 @@
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey, Keypair } from "@solana/web3.js";
 import * as crypto from "crypto";
-import * as fs from "fs";
-import * as path from "path";
-import { PROGRAM_ID } from "./types";
-import { RPC_URL, WS_URL } from "./config";
+import { getProgramId, getIdl } from "./types";
+import { getConfig } from "./config";
 import { uploadQuestionToArweave, fetchQuestionFromArweave } from "../utils/arweave";
-
-const idlPath = path.join(__dirname, "overheat.json");
-const idl = JSON.parse(fs.readFileSync(idlPath, "utf8"));
 
 export interface RegisterQuestionParams {
   questionText: string;
@@ -30,9 +25,13 @@ export async function registerQuestion(
   wallet: anchor.Wallet,
   walletKeypair: Keypair
 ): Promise<RegisterQuestionResult> {
-  const connection = new anchor.web3.Connection(RPC_URL, {
+  const config = getConfig();
+  const idl = getIdl();
+  const programId = getProgramId();
+  
+  const connection = new anchor.web3.Connection(config.rpcUrl, {
     commitment: "confirmed",
-    wsEndpoint: WS_URL,
+    wsEndpoint: config.wsUrl,
   });
   const provider = new anchor.AnchorProvider(connection, wallet, {
     commitment: "confirmed",
@@ -60,7 +59,7 @@ export async function registerQuestion(
   const questionHash = crypto.createHash("sha256").update(params.questionText).digest();
   const [questionPda] = PublicKey.findProgramAddressSync(
     [Buffer.from("question"), wallet.publicKey.toBuffer(), Buffer.from(questionHash.slice(0, 8))],
-    PROGRAM_ID
+    programId
   );
 
   const tx = await program.methods
@@ -79,7 +78,10 @@ export async function registerQuestion(
     .rpc();
 
   console.log(`Transaction: ${tx}`);
-  console.log(`Explorer: https://explorer.solana.com/tx/${tx}?cluster=devnet`);
+  const explorerUrl = config.explorerCluster 
+    ? `https://explorer.solana.com/tx/${tx}?cluster=${config.explorerCluster}`
+    : `https://explorer.solana.com/tx/${tx}`;
+  console.log(`Explorer: ${explorerUrl}`);
   console.log(`Question address: ${questionPda.toString()}`);
 
   return {

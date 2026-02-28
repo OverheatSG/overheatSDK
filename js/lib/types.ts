@@ -1,10 +1,25 @@
 import { PublicKey } from "@solana/web3.js";
 import * as fs from "fs";
 import * as path from "path";
+import { getConfig } from "./config";
 
-export const idlPath = path.join(__dirname, "overheat.json");
-export const idl = JSON.parse(fs.readFileSync(idlPath, "utf8"));
-export const PROGRAM_ID = new PublicKey(idl.address);
+export function getIdlPath(): string {
+  const config = getConfig();
+  return path.join(__dirname, config.idlFileName);
+}
+
+export function getIdl(): any {
+  return JSON.parse(fs.readFileSync(getIdlPath(), "utf8"));
+}
+
+export function getProgramId(): PublicKey {
+  const config = getConfig();
+  if (config.programId) {
+    return new PublicKey(config.programId);
+  }
+  const idl = getIdl();
+  return new PublicKey(idl.address);
+}
 
 export interface QuestionInfo {
   address: string;

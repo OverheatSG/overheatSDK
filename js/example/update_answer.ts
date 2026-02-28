@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { expandPath } from "./utils/wallet";
-import { updateAnswer } from "./lib/update_answer";
+import { expandPath, loadWallet } from "../utils/wallet";
+import { updateAnswer } from "../lib/update_answer";
 
 if (require.main === module) {
   const args = process.argv.slice(2);
@@ -21,7 +21,8 @@ if (require.main === module) {
     args[3] || process.env.ANCHOR_WALLET || "~/.config/solana/id.json"
   );
 
-  updateAnswer(questionAddress, answer, extension, walletPath)
+  const { wallet } = loadWallet(walletPath);
+  updateAnswer(questionAddress, answer, extension, wallet)
     .then(() => process.exit(0))
     .catch((error) => {
       console.error("Error:", error);

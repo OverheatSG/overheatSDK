@@ -2,76 +2,96 @@
 
 Solana SDK for interacting with the Overheat program.
 
+## Overview
+
+This repository contains the TypeScript SDK for the Overheat Solana program. The SDK provides a complete interface for interacting with the Overheat oracle program, including question registration, answer updates, and data retrieval.
+
+## Project Structure
+
+```
+overheatSDK/
+├── js/                    # npm package source code
+│   ├── lib/              # Core SDK functions
+│   ├── utils/            # Utility functions
+│   ├── example/          # Example scripts
+│   ├── index.ts          # Package entry point
+│   └── package.json      # npm package configuration
+└── README.md             # This file
+```
+
 ## Installation
+
+### Using the npm Package
+
+The SDK is published as `overheat-sdk` on npm:
+
+```bash
+npm install overheat-sdk
+```
+
+For detailed installation and usage instructions, see the [package README](./js/README.md).
+
+### From Source
+
+If you want to develop or contribute:
+
+```bash
+# Clone the repository
+git clone https://github.com/OverheatSG/overheatSDK.git
+cd overheatSDK
+
+# Install dependencies
+cd js
+npm install
+
+# Build the package
+npm run build
+```
+
+## Development
+
+### Running Example Scripts
+
+The example scripts are located in `js/example/` and demonstrate how to use the SDK:
 
 ```bash
 cd js
 npm install
+
+# Get all questions
+npx ts-node example/get_all_questions.ts
+
+# Get a specific question
+npx ts-node example/get_question_by_address.ts <question_address>
+
+# Register a question
+npx ts-node example/register_question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rule> [wallet_path]
+
+# Update answer
+npx ts-node example/update_answer.ts <question_address> <answer> <extension> [wallet_path]
 ```
 
-## Usage
+See the [package README](./js/README.md) for detailed command examples.
 
-### Get All Questions
+### Building
 
 ```bash
-npx ts-node get_all_questions.ts
+cd js
+npm run build
 ```
 
-### Get Question by Address
+This compiles TypeScript to JavaScript in the `dist/` directory.
 
-```bash
-npx ts-node get_question_by_address.ts <question_address>
-```
+### Publishing
 
-Example:
-```bash
-npx ts-node get_question_by_address.ts 3W7ST5htXbXZtDpTaYuNZQ1Fe3bU9reffTvV4NGqE7J7
-```
+See the package's `package.json` for publishing scripts. The package is published to npm as `overheat-sdk`.
 
-### Register a Question
+## Documentation
 
-```bash
-npx ts-node register_question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rule> [wallet_path]
-```
+- **Package Documentation**: See [js/README.md](./js/README.md) for complete API documentation and usage examples
+- **GitHub Repository**: https://github.com/OverheatSG/overheatSDK
+- **Issues**: https://github.com/OverheatSG/overheatSDK/issues
 
-Parameters:
-- `question_text`: The question text (max 500 bytes)
-- `expected_expiration_time`: Unix timestamp in seconds
-- `latest_expiration_time`: Unix timestamp in seconds
-- `category`: Category string (max 100 bytes)
-- `rule`: Rule description string
-- `wallet_path`: Optional wallet path (defaults to `~/.config/solana/id.json`)
+## License
 
-Note: 
-- The `answer` field is automatically set to `None` when registering a question. Use `update_answer` to set the answer and extension later.
-- Question data (questionText and rule) will be automatically uploaded to Arweave using Irys Bundler (paid with SOL).
-
-Examples:
-```bash
-# Will aliens visit Earth in 2026?
-npx ts-node register_question.ts 'Will aliens visit Earth in 2026?' 1767225600 1767302400 'Science' 'Must be confirmed by at least 3 major news outlets. UFO sightings alone do not count. The aliens must actually land or make contact.'
-
-npx ts-node register_question.ts 'Will an AI win a Nobel Prize by 2027?' 1811808000 1813103999 'Science' 'The AI must be credited as a co-author or primary contributor. The prize must be awarded for work primarily done by the AI, not just assisted by it.'
-
-```
-
-### Update Answer
-
-```bash
-npx ts-node update_answer.ts <question_address> <answer> <extension> [wallet_path]
-```
-
-Update the answer and extension for a question. Only the question authority can update the answer.
-
-Parameters:
-- `question_address`: The address of the question account
-- `answer`: `true` for Yes, `false` for No (can also use "yes"/"no" or "1"/"0")
-- `extension`: Extension string (max 200 bytes)
-- `wallet_path`: Optional wallet path (defaults to `~/.config/solana/id.json`)
-
-Example:
-```bash
-
-npx ts-node update_answer.ts 3W7ST5htXbXZtDpTaYuNZQ1Fe3bU9reffTvV4NGqE7J7 false 'Additional information'
-
-```
+MIT
