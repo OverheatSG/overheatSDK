@@ -1,18 +1,17 @@
 {
   "name": "overheat-sdk",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "Solana SDK for interacting with the Overheat program",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "lib/overheat-devnet.json",
     "README.md",
-    "LICENSE",
-    "example"
+    "LICENSE"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy-json",
+    "copy-json": "mkdir -p dist/lib && cp lib/*.json dist/lib/ 2>/dev/null || true",
     "prepublishOnly": "npm run build",
     "clean": "rm -rf dist"
   },

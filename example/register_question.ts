@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
 import * as os from "os";
-import { expandPath, loadWallet } from "../utils/wallet";
-import { registerQuestion, RegisterQuestionParams } from "../lib/register_question";
+import { expandPath, loadWallet, registerQuestion, getConfig } from "overheat-sdk";
 
 if (require.main === module) {
   const args = process.argv.slice(2);
@@ -49,7 +48,7 @@ if (require.main === module) {
     .then((result) => {
       console.log(`\n✅ Question registered successfully!`);
       console.log(`Transaction: ${result.transaction}`);
-      const config = require("../lib/config").getConfig();
+      const config = getConfig();
       const explorerUrl = config.explorerCluster 
         ? `https://explorer.solana.com/tx/${result.transaction}?cluster=${config.explorerCluster}`
         : `https://explorer.solana.com/tx/${result.transaction}`;
@@ -60,6 +59,10 @@ if (require.main === module) {
     })
     .catch((error) => {
       console.error("Error:", error);
+      if (error.logs) {
+        console.error("Program logs:");
+        error.logs.forEach((log: string) => console.error("  ", log));
+      }
       process.exit(1);
     });
 }

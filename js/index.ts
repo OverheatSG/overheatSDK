@@ -5,6 +5,7 @@ export * from "./lib/update_answer";
 export * from "./lib/get_all_questions";
 export * from "./lib/get_question_by_address";
 export * from "./lib/get_questions_by_time_range";
+export * from "./lib/display";
 export * from "./utils/arweave";
 export * from "./utils/wallet";
 

@@ -1,0 +1,21 @@
+{
+  "name": "overheat-sdk-examples",
+  "version": "1.0.0",
+  "description": "Examples for overheat-sdk",
+  "private": true,
+  "scripts": {
+    "example:get-all": "ts-node example/get_all_questions.ts",
+    "example:get-by-address": "ts-node example/get_question_by_address.ts",
+    "example:get-by-time": "ts-node example/get_questions_by_created_time.ts",
+    "example:register": "ts-node example/register_question.ts",
+    "example:update-answer": "ts-node example/update_answer.ts"
+  },
+  "dependencies": {
+    "overheat-sdk": "^0.1.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}

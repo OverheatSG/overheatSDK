@@ -52,12 +52,17 @@ npm run build
 
 ### Running Example Scripts
 
-The example scripts are located in `js/example/` and demonstrate how to use the SDK:
+The example scripts are located in `example/` and demonstrate how to use the SDK.
+
+To run the examples:
 
 ```bash
-cd js
+# Install dependencies (including overheat-sdk)
 npm install
 
+# Then run the examples:
+
+```bash
 # Get all questions
 npx ts-node example/get_all_questions.ts
 
@@ -81,6 +86,9 @@ npx ts-node example/register_question.ts \
 
 # Update answer
 npx ts-node example/update_answer.ts <question_address> <answer> <explanation> [wallet_path]
+```
+
+**Note:** The example scripts use the `overheat-sdk` npm package. Make sure you have installed it with `npm install overheat-sdk` before running the examples.
 
 npx ts-node example/update_answer.ts \
   CJF2c5gbWhwykmijZb6Keqp8Bj1wkFi3B77WDrCRUXAq \

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-import { expandPath, loadWallet } from "../utils/wallet";
-import { updateAnswer } from "../lib/update_answer";
+import { expandPath, loadWallet, updateAnswer, getConfig } from "overheat-sdk";
 
 if (require.main === module) {
   const args = process.argv.slice(2);
@@ -26,7 +25,7 @@ if (require.main === module) {
     .then((result) => {
       console.log(`\n✅ Answer updated successfully!`);
       console.log(`Transaction: ${result.transaction}`);
-      const config = require("../lib/config").getConfig();
+      const config = getConfig();
       const explorerUrl = config.explorerCluster 
         ? `https://explorer.solana.com/tx/${result.transaction}?cluster=${config.explorerCluster}`
         : `https://explorer.solana.com/tx/${result.transaction}`;

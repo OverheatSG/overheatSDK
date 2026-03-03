@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
-import { getQuestionByAddress } from "../lib/get_question_by_address";
-import { printQuestionDetail } from "../lib/display";
+import { getQuestionByAddress, printQuestionDetail } from "overheat-sdk";
 
 if (require.main === module) {
   const args = process.argv.slice(2);
   if (args.length < 1) {
     console.error("Usage: get_question_by_address.ts <question_address>");
-    console.error("Example: get_question_by_address.ts 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU");
+    console.error(
+      "Example: get_question_by_address.ts 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU"
+    );
     process.exit(1);
   }
 

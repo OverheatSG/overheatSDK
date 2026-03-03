@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-import { getQuestionsAfterTime } from "../lib/get_questions_by_time_range";
-import { printQuestionsList } from "../lib/display";
+import { getQuestionsAfterTime, printQuestionsList } from "overheat-sdk";
 
 if (require.main === module) {
   const args = process.argv.slice(2);
@@ -24,7 +23,9 @@ if (require.main === module) {
 
   getQuestionsAfterTime(startTime)
     .then((questions) => {
-      const header = `\nFound ${questions.length} questions created after ${new Date(startTime * 1000).toISOString()}:`;
+      const header = `\nFound ${questions.length} questions created after ${new Date(
+        startTime * 1000
+      ).toISOString()}:`;
       printQuestionsList(questions, header);
       process.exit(0);
     })
