@@ -11,7 +11,7 @@ import { fetchQuestionFromArweave } from "../utils/arweave";
 
 /**
  * Get a specific question by its address (public key)
- * Fetches question data from on-chain account and retrieves rule from Arweave
+ * Fetches question data from on-chain account and retrieves rules from Arweave
  * @param address - Public key address of the question account
  * @returns QuestionInfo object if found, null otherwise
  */

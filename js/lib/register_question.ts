@@ -17,8 +17,8 @@ export interface RegisterQuestionParams {
   latestExpirationTime: number;
   /** Category string (max 100 bytes) */
   category: string;
-  /** Rule description string (stored on Arweave) */
-  rule: string;
+  /** Rules description string (stored on Arweave) */
+  rules: string;
 }
 
 /**
@@ -31,7 +31,7 @@ export interface RegisterQuestionResult {
   questionAddress: string;
   /** Transaction signature */
   transaction: string;
-  /** Arweave transaction ID where the rule is stored */
+  /** Arweave transaction ID where the rules are stored */
   arweaveId: string;
 }
 
@@ -39,7 +39,7 @@ export interface RegisterQuestionResult {
  * Register a new question on the blockchain
  * 
  * This function:
- * 1. Uploads the question rule to Arweave
+ * 1. Uploads the question rules to Arweave
  * 2. Calculates the PDA (Program Derived Address) for the question
  * 3. Calls the register_question instruction on the Solana program
  * 
@@ -72,7 +72,7 @@ export async function registerQuestion(
   const uploadResult = await uploadQuestionToArweave(
     {
       questionText: params.questionText,
-      rule: params.rule,
+      rules: params.rules,
     },
     walletKeypair
   );

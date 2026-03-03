@@ -6,11 +6,11 @@ import { expandPath, loadWallet, registerQuestion, getConfig } from "overheat-sd
 if (require.main === module) {
   const args = process.argv.slice(2);
   if (args.length < 5) {
-    console.error("Usage: register_question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rule> [wallet_path]");
+    console.error("Usage: register_question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rules> [wallet_path]");
     console.error("  expected_expiration_time: Unix timestamp (seconds)");
     console.error("  latest_expiration_time: Unix timestamp (seconds)");
     console.error("  category: Category string (max 100 bytes)");
-    console.error("  rule: Rule description string");
+    console.error("  rules: Rules description string");
     console.error("  wallet_path: Optional wallet path (defaults to ~/.config/solana/id.json)");
     console.error("\nNote: Question data will be automatically uploaded to Arweave");
     console.error("\nExample:");
@@ -22,7 +22,7 @@ if (require.main === module) {
   const expectedExpirationTime = parseInt(args[1], 10);
   const latestExpirationTime = parseInt(args[2], 10);
   const category = args[3];
-  const rule = args[4];
+  const rules = args[4];
   const walletPath = expandPath(
     args[5] || process.env.ANCHOR_WALLET || "~/.config/solana/id.json"
   );
@@ -40,7 +40,7 @@ if (require.main === module) {
       expectedExpirationTime,
       latestExpirationTime,
       category,
-      rule,
+      rules,
     },
     wallet,
     walletKeypair

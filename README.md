@@ -75,7 +75,7 @@ npx ts-node example/get_questions_by_created_time.ts <start_time>
 npx ts-node example/get_questions_by_created_time.ts 1704067200
 
 # Register a question
-npx ts-node example/register_question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rule> [wallet_path]
+npx ts-node example/register_question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rules> [wallet_path]
 
 npx ts-node example/register_question.ts \
   "Will aliens visit Earth in 2026?" \

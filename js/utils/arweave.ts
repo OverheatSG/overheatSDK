@@ -57,21 +57,21 @@ export async function fetchQuestionFromArweave(
 
 /**
  * Upload question description to Arweave using Irys Bundler
- * @param questionData - Object containing question text and rule
+ * @param questionData - Object containing question text and rules
  * @param walletKeypair - Solana wallet keypair for payment
  * @returns Arweave transaction ID (44 characters) and gateway URL
  */
 export async function uploadQuestionToArweave(
   questionData: {
     questionText: string;
-    rule: string;
+    rules: string;
   },
   walletKeypair: Keypair
 ): Promise<ArweaveUploadResult> {
   const config = getConfig();
   const description: QuestionDescription = {
     questionText: questionData.questionText,
-    rules: questionData.rule,
+    rules: questionData.rules,
   };
 
   const data = JSON.stringify(description, null, 2);

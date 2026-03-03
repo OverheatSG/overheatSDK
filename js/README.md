@@ -159,7 +159,7 @@ const result = await registerQuestion(
     expectedExpirationTime: 1767225600, // Unix timestamp
     latestExpirationTime: 1767302400,   // Unix timestamp
     category: 'Science',
-    rule: 'Must be confirmed by at least 3 major news outlets.'
+    rules: 'Must be confirmed by at least 3 major news outlets.'
   },
   wallet,
   keypair
@@ -175,11 +175,11 @@ console.log('Arweave ID:', result.arweaveId);
 - `params.expectedExpirationTime`: Unix timestamp in seconds
 - `params.latestExpirationTime`: Unix timestamp in seconds
 - `params.category`: Category string (max 100 bytes)
-- `params.rule`: Rule description string
+- `params.rules`: Rules description string
 - `wallet`: Anchor wallet instance
 - `walletKeypair`: Solana keypair for signing transactions
 
-**Note:** Question data (questionText and rule) will be automatically uploaded to Arweave using Irys Bundler (paid with SOL).
+**Note:** Question data (questionText and rules) will be automatically uploaded to Arweave using Irys Bundler (paid with SOL).
 
 #### `updateAnswer(questionAddress, answer, explanation, wallet): Promise<UpdateAnswerResult>`
 
@@ -231,7 +231,7 @@ import { Keypair } from '@solana/web3.js';
 const result = await uploadQuestionToArweave(
   {
     questionText: 'Will aliens visit Earth in 2026?',
-    rule: 'Must be confirmed by at least 3 major news outlets.'
+    rules: 'Must be confirmed by at least 3 major news outlets.'
   },
   walletKeypair
 );
@@ -247,7 +247,7 @@ Fetch question data from Arweave.
 import { fetchQuestionFromArweave } from 'overheat-sdk';
 
 const data = await fetchQuestionFromArweave('7abE51MLDEmmH13RGALPghJBBqiqiJ5LJZvQrApPL3i5');
-console.log(data.questionText, data.rule);
+console.log(data.questionText, data.rules);
 ```
 
 ## Types
@@ -277,7 +277,7 @@ interface RegisterQuestionParams {
   expectedExpirationTime: number;
   latestExpirationTime: number;
   category: string;
-  rule: string;
+  rules: string;
 }
 ```
 
