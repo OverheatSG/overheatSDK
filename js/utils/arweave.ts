@@ -8,8 +8,8 @@ import { getConfig } from "../lib/config";
 export interface QuestionDescription {
   /** The question text */
   questionText: string;
-  /** The rule description */
-  rule: string;
+  /** The rules description */
+  rules: string;
 }
 
 /**
@@ -27,7 +27,7 @@ export interface ArweaveUploadResult {
 /**
  * Fetch question data from Arweave using transaction ID
  * @param transactionId - Arweave transaction ID (44 characters)
- * @returns QuestionDescription object with questionText and rule
+ * @returns QuestionDescription object with questionText and rules
  */
 export async function fetchQuestionFromArweave(
   transactionId: string
@@ -39,11 +39,15 @@ export async function fetchQuestionFromArweave(
   });
   
   if (response.ok) {
-    const data = await response.json() as any;
-    if (data && typeof data.questionText === "string" && typeof data.rule === "string") {
+    const data = (await response.json()) as any;
+    if (
+      data &&
+      typeof data.questionText === "string" &&
+      typeof data.rules === "string"
+    ) {
       return {
         questionText: data.questionText,
-        rule: data.rule,
+        rules: data.rules,
       };
     }
   }
@@ -67,7 +71,7 @@ export async function uploadQuestionToArweave(
   const config = getConfig();
   const description: QuestionDescription = {
     questionText: questionData.questionText,
-    rule: questionData.rule,
+    rules: questionData.rule,
   };
 
   const data = JSON.stringify(description, null, 2);

@@ -37,15 +37,15 @@ export async function getQuestionByAddress(address: string): Promise<QuestionInf
     
     const arweaveId = decodeArweaveId(questionData.arweaveId);
     
-    // Fetch rule from Arweave
-    let rule = "";
+    // Fetch rules from Arweave
+    let rules = "";
     try {
       if (arweaveId && arweaveId.trim().length > 0) {
         const arweaveData = await fetchQuestionFromArweave(arweaveId.trim());
-        rule = arweaveData.rule;
+        rules = arweaveData.rules;
       }
     } catch (error) {
-      // If fetching from Arweave fails, rule will remain empty string
+      // If fetching from Arweave fails, rules will remain empty string
     }
     
     return {
@@ -57,7 +57,7 @@ export async function getQuestionByAddress(address: string): Promise<QuestionInf
       questionText: decodeBytesToString(questionData.questionText),
       category: decodeBytesToString(questionData.category),
       explanation: decodeBytesToString(questionData.explanation),
-      rule: rule,
+      rules: rules,
       answer: questionData.answer === null ? null : questionData.answer ? "Yes" : "No",
     };
   } catch (error) {

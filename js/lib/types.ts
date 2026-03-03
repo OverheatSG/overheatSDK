@@ -51,8 +51,8 @@ export interface QuestionInfo {
   category: string;
   /** Explanation string (provided when answer is updated) */
   explanation: string;
-  /** Rule description (fetched from Arweave) */
-  rule: string;
+  /** Rules description (fetched from Arweave) */
+  rules: string;
   /** Answer: "Yes", "No", or null if not answered yet */
   answer: string | null;
 }

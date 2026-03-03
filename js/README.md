@@ -264,7 +264,7 @@ interface QuestionInfo {
   questionText: string;                // The question text
   category: string;                    // Category string
   explanation: string;                  // Explanation string (provided when answer is updated)
-  rule: string;                        // Rule description (fetched from Arweave)
+  rules: string;                       // Rules description (fetched from Arweave)
   answer: string | null;               // 'Yes', 'No', or null if not answered yet
 }
 ```

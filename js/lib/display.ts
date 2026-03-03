@@ -12,7 +12,7 @@ export function printQuestionDetail(question: QuestionInfo): void {
   console.log(`Authority: ${question.authority}`);
   console.log(`Category: ${question.category || "N/A"}`);
   console.log(`Question: ${question.questionText}`);
-  console.log(`Rule: ${question.rule}`);
+  console.log(`Rules: ${question.rules}`);
   console.log(`Answer: ${question.answer || "Not answered"}`);
   console.log(`Explanation: ${question.explanation}`);
   if (question.expectedExpirationTime) {
@@ -40,7 +40,7 @@ export function printQuestionSummary(question: QuestionInfo, index?: number): vo
   console.log(`  Address: ${question.address}`);
   console.log(`  Category: ${question.category || "N/A"}`);
   console.log(`  Question: ${question.questionText}`);
-  console.log(`  Rule: ${question.rule}`);
+  console.log(`  Rules: ${question.rules}`);
   console.log(`  Answer: ${question.answer || "Not answered"}`);
   console.log(`  Explanation: ${question.explanation}`);
   if (question.expectedExpirationTime) {
