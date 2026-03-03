@@ -3,10 +3,18 @@ import { PublicKey, Connection } from "@solana/web3.js";
 import {
   QuestionInfo,
   decodeBytesToString,
+  decodeArweaveId,
   getIdl,
 } from "./types";
 import { getConfig } from "./config";
+import { fetchQuestionFromArweave } from "../utils/arweave";
 
+/**
+ * Get a specific question by its address (public key)
+ * Fetches question data from on-chain account and retrieves rule from Arweave
+ * @param address - Public key address of the question account
+ * @returns QuestionInfo object if found, null otherwise
+ */
 export async function getQuestionByAddress(address: string): Promise<QuestionInfo | null> {
   const config = getConfig();
   const idl = getIdl();
@@ -24,17 +32,32 @@ export async function getQuestionByAddress(address: string): Promise<QuestionInf
   const program = new anchor.Program(idl as anchor.Idl, provider) as any;
 
   try {
+    // Fetch account data
     const questionData = await program.account.question.fetch(questionAddress);
+    
+    const arweaveId = decodeArweaveId(questionData.arweaveId);
+    
+    // Fetch rule from Arweave
+    let rule = "";
+    try {
+      if (arweaveId && arweaveId.trim().length > 0) {
+        const arweaveData = await fetchQuestionFromArweave(arweaveId.trim());
+        rule = arweaveData.rule;
+      }
+    } catch (error) {
+      // If fetching from Arweave fails, rule will remain empty string
+    }
     
     return {
       address: questionAddress.toString(),
       authority: questionData.authority.toString(),
+      createdAt: questionData.createdAt.toNumber(),
       expectedExpirationTime: questionData.expectedExpirationTime.toNumber(),
       latestExpirationTime: questionData.latestExpirationTime.toNumber(),
       questionText: decodeBytesToString(questionData.questionText),
       category: decodeBytesToString(questionData.category),
-      extension: decodeBytesToString(questionData.extension),
-      arweaveId: decodeBytesToString(questionData.arweaveId),
+      explanation: decodeBytesToString(questionData.explanation),
+      rule: rule,
       answer: questionData.answer === null ? null : questionData.answer ? "Yes" : "No",
     };
   } catch (error) {

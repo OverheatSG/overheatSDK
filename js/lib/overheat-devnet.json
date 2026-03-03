@@ -1,5 +1,5 @@
 {
-  "address": "9WB2rbUAVmxdnXJY4abE588LuHnqWibZYVpx5LwgN8wo",
+  "address": "mQmgWqb7YPTakneM4bkMBc7VthJtqGzYfppkZ3kymbJ",
   "metadata": {
     "name": "overheat",
     "version": "0.1.0",
@@ -91,7 +91,7 @@
           "type": "bool"
         },
         {
-          "name": "extension",
+          "name": "explanation",
           "type": "string"
         }
       ]
@@ -138,6 +138,10 @@
             "type": "pubkey"
           },
           {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
             "name": "expected_expiration_time",
             "type": "i64"
           },
@@ -170,7 +174,7 @@
             }
           },
           {
-            "name": "extension",
+            "name": "explanation",
             "type": {
               "array": [
                 "u8",

@@ -2,14 +2,25 @@ import { Keypair } from "@solana/web3.js";
 import Irys from "@irys/sdk";
 import { getConfig } from "../lib/config";
 
+/**
+ * Question description structure stored on Arweave
+ */
 export interface QuestionDescription {
+  /** The question text */
   questionText: string;
+  /** The rule description */
   rule: string;
 }
 
+/**
+ * Result of uploading data to Arweave via Irys
+ */
 export interface ArweaveUploadResult {
+  /** Arweave transaction ID (43-44 characters) */
   transactionId: string;
+  /** Gateway URL to access the uploaded data */
   url: string;
+  /** Full transaction ID (padded to 44 characters if needed) */
   fullId: string;
 }
 

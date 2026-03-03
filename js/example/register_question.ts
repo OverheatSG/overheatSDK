@@ -47,7 +47,15 @@ if (require.main === module) {
     walletKeypair
   )
     .then((result) => {
-      console.log(`\nArweave ID: ${result.arweaveId}`);
+      console.log(`\n✅ Question registered successfully!`);
+      console.log(`Transaction: ${result.transaction}`);
+      const config = require("../lib/config").getConfig();
+      const explorerUrl = config.explorerCluster 
+        ? `https://explorer.solana.com/tx/${result.transaction}?cluster=${config.explorerCluster}`
+        : `https://explorer.solana.com/tx/${result.transaction}`;
+      console.log(`Explorer: ${explorerUrl}`);
+      console.log(`Question address: ${result.questionAddress}`);
+      console.log(`Arweave ID: ${result.arweaveId}`);
       process.exit(0);
     })
     .catch((error) => {

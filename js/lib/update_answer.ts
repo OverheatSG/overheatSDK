@@ -3,15 +3,32 @@ import { PublicKey } from "@solana/web3.js";
 import { getIdl } from "./types";
 import { getConfig } from "./config";
 
+/**
+ * Result of updating an answer
+ */
 export interface UpdateAnswerResult {
+  /** Whether the update was successful */
   success: boolean;
+  /** Transaction signature */
   transaction: string;
 }
 
+/**
+ * Update the answer for an existing question
+ * 
+ * Only the question's authority can update the answer.
+ * 
+ * @param questionAddress - Public key address of the question account
+ * @param answer - Boolean answer (true for Yes, false for No)
+ * @param explanation - Explanation string (max 200 bytes)
+ * @param wallet - Anchor wallet instance for signing transactions (must be the question authority)
+ * @returns UpdateAnswerResult with transaction signature
+ * @throws Error if update fails (e.g., unauthorized, invalid address)
+ */
 export async function updateAnswer(
   questionAddress: string,
   answer: boolean,
-  extension: string,
+  explanation: string,
   wallet: anchor.Wallet
 ): Promise<UpdateAnswerResult> {
   const config = getConfig();
@@ -30,18 +47,12 @@ export async function updateAnswer(
   const questionPubkey = new PublicKey(questionAddress);
 
   const tx = await program.methods
-    .updateAnswer(answer, extension)
+    .updateAnswer(answer, explanation)
     .accounts({
       question: questionPubkey,
       authority: wallet.publicKey,
     })
     .rpc();
-
-  console.log(`Transaction: ${tx}`);
-  const explorerUrl = config.explorerCluster 
-    ? `https://explorer.solana.com/tx/${tx}?cluster=${config.explorerCluster}`
-    : `https://explorer.solana.com/tx/${tx}`;
-  console.log(`Explorer: ${explorerUrl}`);
 
   return {
     success: true,

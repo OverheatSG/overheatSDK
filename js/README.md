@@ -106,6 +106,43 @@ if (question) {
 }
 ```
 
+#### `getQuestionsByTimeRange(timeRange?: TimeRangeFilter): Promise<QuestionInfo[]>`
+
+Get questions filtered by creation time range. Uses the `created_at` field stored in the Question account for efficient filtering.
+
+```typescript
+import { getQuestionsByTimeRange } from 'overheat-sdk';
+
+// Get questions created between two timestamps
+const questions = await getQuestionsByTimeRange({
+  startTime: 1704067200, // Unix timestamp (seconds)
+  endTime: 1704153600
+});
+
+// Get all questions (no filter)
+const allQuestions = await getQuestionsByTimeRange();
+```
+
+#### `getQuestionsAfterTime(startTime: number): Promise<QuestionInfo[]>`
+
+Get questions created after a specific time.
+
+```typescript
+import { getQuestionsAfterTime } from 'overheat-sdk';
+
+const questions = await getQuestionsAfterTime(1704067200);
+```
+
+#### `getQuestionsBeforeTime(endTime: number): Promise<QuestionInfo[]>`
+
+Get questions created before a specific time.
+
+```typescript
+import { getQuestionsBeforeTime } from 'overheat-sdk';
+
+const questions = await getQuestionsBeforeTime(1704153600);
+```
+
 #### `registerQuestion(params, wallet, walletKeypair): Promise<RegisterQuestionResult>`
 
 Register a new question on the blockchain.
@@ -144,9 +181,9 @@ console.log('Arweave ID:', result.arweaveId);
 
 **Note:** Question data (questionText and rule) will be automatically uploaded to Arweave using Irys Bundler (paid with SOL).
 
-#### `updateAnswer(questionAddress, answer, extension, wallet): Promise<UpdateAnswerResult>`
+#### `updateAnswer(questionAddress, answer, explanation, wallet): Promise<UpdateAnswerResult>`
 
-Update the answer and extension for a question. Only the question authority can update the answer.
+Update the answer and explanation for a question. Only the question authority can update the answer.
 
 ```typescript
 import { updateAnswer, loadWallet } from 'overheat-sdk';
@@ -166,7 +203,7 @@ console.log('Transaction:', result.transaction);
 **Parameters:**
 - `questionAddress`: The address of the question account
 - `answer`: `true` for Yes, `false` for No
-- `extension`: Extension string (max 200 bytes)
+- `explanation`: Explanation string (max 200 bytes)
 - `wallet`: Anchor wallet instance
 
 ### Wallet Utilities
@@ -219,15 +256,16 @@ console.log(data.questionText, data.rule);
 
 ```typescript
 interface QuestionInfo {
-  address: string;
-  authority: string;
-  expectedExpirationTime: number;
-  latestExpirationTime: number;
-  questionText: string;
-  category: string;
-  extension: string;
-  arweaveId: string;
-  answer: string | null; // 'Yes', 'No', or null
+  address: string;                    // Public key address of the question account
+  authority: string;                   // Public key of the question's authority (creator)
+  createdAt: number;                   // Unix timestamp (seconds) when the question was created
+  expectedExpirationTime: number;      // Expected expiration time as Unix timestamp (seconds)
+  latestExpirationTime: number;        // Latest expiration time as Unix timestamp (seconds)
+  questionText: string;                // The question text
+  category: string;                    // Category string
+  explanation: string;                  // Explanation string (provided when answer is updated)
+  rule: string;                        // Rule description (fetched from Arweave)
+  answer: string | null;               // 'Yes', 'No', or null if not answered yet
 }
 ```
 
@@ -263,6 +301,15 @@ interface UpdateAnswerResult {
 }
 ```
 
+### `TimeRangeFilter`
+
+```typescript
+interface TimeRangeFilter {
+  startTime?: number;  // Start time as Unix timestamp (seconds), inclusive
+  endTime?: number;    // End time as Unix timestamp (seconds), inclusive
+}
+```
+
 ## Complete Example
 
 ```typescript
@@ -270,6 +317,7 @@ import {
   registerQuestion,
   getAllQuestions,
   getQuestionByAddress,
+  getQuestionsByTimeRange,
   updateAnswer,
   loadWallet,
   setNetwork
