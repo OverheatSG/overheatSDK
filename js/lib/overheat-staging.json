@@ -1,0 +1,198 @@
+{
+  "address": "DXT75zmao3Dcq9D2uHg5CMoaNRVj3X7BGiBsqhhAVYNq",
+  "metadata": {
+    "name": "overheat",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "register_question",
+      "docs": [
+        "Register a new question"
+      ],
+      "discriminator": [
+        85,
+        24,
+        110,
+        154,
+        208,
+        91,
+        3,
+        75
+      ],
+      "accounts": [
+        {
+          "name": "question",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "question_text",
+          "type": "string"
+        },
+        {
+          "name": "expected_expiration_time",
+          "type": "i64"
+        },
+        {
+          "name": "latest_expiration_time",
+          "type": "i64"
+        },
+        {
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "name": "arweave_id",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "update_answer",
+      "docs": [
+        "Update the answer for a question (yes/no)"
+      ],
+      "discriminator": [
+        172,
+        127,
+        30,
+        84,
+        31,
+        208,
+        56,
+        16
+      ],
+      "accounts": [
+        {
+          "name": "question",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "answer",
+          "type": "bool"
+        },
+        {
+          "name": "explanation",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Question",
+      "discriminator": [
+        111,
+        22,
+        150,
+        220,
+        181,
+        122,
+        118,
+        127
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized to update this question"
+    },
+    {
+      "code": 6001,
+      "name": "QuestionTooLong",
+      "msg": "Question text too long"
+    }
+  ],
+  "types": [
+    {
+      "name": "Question",
+      "docs": [
+        "Question account structure"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "expected_expiration_time",
+            "type": "i64"
+          },
+          {
+            "name": "latest_expiration_time",
+            "type": "i64"
+          },
+          {
+            "name": "answer",
+            "type": {
+              "option": "bool"
+            }
+          },
+          {
+            "name": "question_text",
+            "type": {
+              "array": [
+                "u8",
+                500
+              ]
+            }
+          },
+          {
+            "name": "category",
+            "type": {
+              "array": [
+                "u8",
+                100
+              ]
+            }
+          },
+          {
+            "name": "explanation",
+            "type": {
+              "array": [
+                "u8",
+                200
+              ]
+            }
+          },
+          {
+            "name": "arweave_id",
+            "type": {
+              "array": [
+                "u8",
+                44
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

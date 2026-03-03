@@ -1,6 +1,6 @@
 # overheat-sdk
 
-Solana SDK for interacting with the Overheat program.
+TypeScript SDK for interacting with the Overheat Solana oracle program.
 
 ## Installation
 
@@ -11,36 +11,25 @@ npm install overheat-sdk
 ## Quick Start
 
 ```typescript
-import {
-  getAllQuestions,
-  getQuestionByAddress,
-  registerQuestion,
-  updateAnswer,
-  loadWallet,
-  setNetwork,
-  QuestionInfo
-} from 'overheat-sdk';
+import { getAllQuestions, setNetwork } from 'overheat-sdk';
 
 // Set network (defaults to devnet)
-setNetwork('mainnet'); // or 'devnet'
+setNetwork('devnet');
 
 // Get all questions
-const questions: QuestionInfo[] = await getAllQuestions();
-console.log(questions);
-
-// Get a specific question
-const question = await getQuestionByAddress('3W7ST5htXbXZtDpTaYuNZQ1Fe3bU9reffTvV4NGqE7J7');
+const questions = await getAllQuestions();
+console.log(`Found ${questions.length} questions`);
 ```
 
 ## Environment Configuration
 
-The SDK supports both **devnet** and **mainnet** environments. By default, it uses **devnet**.
+The SDK supports **devnet**, **staging**, and **mainnet** environments. By default, it uses **devnet**.
 
 ```typescript
 import { setNetwork } from 'overheat-sdk';
 
-// Switch to mainnet
-setNetwork('mainnet');
+// Switch network
+setNetwork('mainnet'); // or 'devnet', 'staging'
 
 // Or use environment variable
 process.env.OVERHEAT_NETWORK = 'mainnet';
@@ -50,7 +39,7 @@ process.env.OVERHEAT_NETWORK = 'mainnet';
 
 ### Configuration
 
-#### `setNetwork(network: 'devnet' | 'mainnet')`
+#### `setNetwork(network: 'devnet' | 'staging' | 'mainnet')`
 
 Set the active network environment.
 
@@ -59,13 +48,13 @@ import { setNetwork } from 'overheat-sdk';
 setNetwork('mainnet');
 ```
 
-#### `getNetwork(): 'devnet' | 'mainnet'`
+#### `getNetwork(): 'devnet' | 'staging' | 'mainnet'`
 
 Get the current network.
 
 ```typescript
 import { getNetwork } from 'overheat-sdk';
-const network = getNetwork(); // 'devnet' or 'mainnet'
+const network = getNetwork();
 ```
 
 #### `getConfig(): NetworkConfig`
@@ -75,7 +64,7 @@ Get the current network configuration.
 ```typescript
 import { getConfig } from 'overheat-sdk';
 const config = getConfig();
-console.log(config.rpcUrl, config.programId);
+console.log(config.rpcUrl);
 ```
 
 ### Question Operations
@@ -145,7 +134,7 @@ const questions = await getQuestionsBeforeTime(1704153600);
 
 #### `registerQuestion(params, wallet, walletKeypair): Promise<RegisterQuestionResult>`
 
-Register a new question on the blockchain.
+Register a new question on the blockchain. The question rules are automatically uploaded to Arweave.
 
 ```typescript
 import { registerQuestion, loadWallet } from 'overheat-sdk';
@@ -155,11 +144,11 @@ const { wallet, keypair } = loadWallet('~/.config/solana/id.json');
 
 const result = await registerQuestion(
   {
-    questionText: 'Will aliens visit Earth in 2026?',
-    expectedExpirationTime: 1767225600, // Unix timestamp
-    latestExpirationTime: 1767302400,   // Unix timestamp
-    category: 'Science',
-    rules: 'Must be confirmed by at least 3 major news outlets.'
+    questionText: 'Will Bitcoin reach $100,000 by the end of 2025?',
+    expectedExpirationTime: 1735689600, // Unix timestamp (seconds)
+    latestExpirationTime: 1735776000,   // Unix timestamp (seconds)
+    category: 'Crypto',
+    rules: 'Price must be confirmed by at least 3 major cryptocurrency exchanges.'
   },
   wallet,
   keypair
@@ -175,11 +164,9 @@ console.log('Arweave ID:', result.arweaveId);
 - `params.expectedExpirationTime`: Unix timestamp in seconds
 - `params.latestExpirationTime`: Unix timestamp in seconds
 - `params.category`: Category string (max 100 bytes)
-- `params.rules`: Rules description string
+- `params.rules`: Rules description string (stored on Arweave)
 - `wallet`: Anchor wallet instance
-- `walletKeypair`: Solana keypair for signing transactions
-
-**Note:** Question data (questionText and rules) will be automatically uploaded to Arweave using Irys Bundler (paid with SOL).
+- `walletKeypair`: Solana keypair for signing transactions and Arweave upload payment
 
 #### `updateAnswer(questionAddress, answer, explanation, wallet): Promise<UpdateAnswerResult>`
 
@@ -204,7 +191,33 @@ console.log('Transaction:', result.transaction);
 - `questionAddress`: The address of the question account
 - `answer`: `true` for Yes, `false` for No
 - `explanation`: Explanation string (max 200 bytes)
-- `wallet`: Anchor wallet instance
+- `wallet`: Anchor wallet instance (must be the question authority)
+
+### Display Utilities
+
+#### `printQuestionDetail(question: QuestionInfo): void`
+
+Print a single question in detailed format.
+
+```typescript
+import { getQuestionByAddress, printQuestionDetail } from 'overheat-sdk';
+
+const question = await getQuestionByAddress('...');
+if (question) {
+  printQuestionDetail(question);
+}
+```
+
+#### `printQuestionsList(questions: QuestionInfo[], header?: string): void`
+
+Print multiple questions in a list format.
+
+```typescript
+import { getAllQuestions, printQuestionsList } from 'overheat-sdk';
+
+const questions = await getAllQuestions();
+printQuestionsList(questions);
+```
 
 ### Wallet Utilities
 
@@ -263,7 +276,7 @@ interface QuestionInfo {
   latestExpirationTime: number;        // Latest expiration time as Unix timestamp (seconds)
   questionText: string;                // The question text
   category: string;                    // Category string
-  explanation: string;                  // Explanation string (provided when answer is updated)
+  explanation: string;                 // Explanation string (provided when answer is updated)
   rules: string;                       // Rules description (fetched from Arweave)
   answer: string | null;               // 'Yes', 'No', or null if not answered yet
 }
@@ -333,11 +346,11 @@ async function main() {
   // Register a question
   const registerResult = await registerQuestion(
     {
-      questionText: 'Will aliens visit Earth in 2026?',
-      expectedExpirationTime: 1767225600,
-      latestExpirationTime: 1767302400,
-      category: 'Science',
-      rule: 'Must be confirmed by at least 3 major news outlets.'
+      questionText: 'Will Bitcoin reach $100,000 by the end of 2025?',
+      expectedExpirationTime: 1735689600,
+      latestExpirationTime: 1735776000,
+      category: 'Crypto',
+      rules: 'Price must be confirmed by at least 3 major cryptocurrency exchanges.'
     },
     wallet,
     keypair
@@ -353,6 +366,12 @@ async function main() {
   if (question) {
     console.log('Question:', question.questionText);
   }
+
+  // Get questions by time range
+  const recentQuestions = await getQuestionsByTimeRange({
+    startTime: 1704067200
+  });
+  console.log('Recent questions:', recentQuestions.length);
 
   // Update answer
   await updateAnswer(

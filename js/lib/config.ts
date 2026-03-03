@@ -1,7 +1,7 @@
 /**
  * Supported network types
  */
-export type Network = "devnet" | "mainnet";
+export type Network = "devnet"  | "staging" | "mainnet";
 
 /**
  * Network configuration interface
@@ -29,6 +29,14 @@ export const NETWORK_CONFIGS: Record<Network, NetworkConfig> = {
     irysNode: "https://devnet.irys.xyz",
     irysGateway: "https://devnet.irys.xyz",
     idlFileName: "overheat-devnet.json",
+    explorerCluster: "devnet",
+  },
+  staging: {
+    rpcUrl: "https://api.zan.top/node/v1/solana/devnet/85f8917431284c59abfeaeb2e32a0d87",
+    wsUrl: "wss://api.zan.top/node/ws/v1/solana/devnet/85f8917431284c59abfeaeb2e32a0d87",
+    irysNode: "https://devnet.irys.xyz",
+    irysGateway: "https://devnet.irys.xyz",
+    idlFileName: "overheat-staging.json",
     explorerCluster: "devnet",
   },
   mainnet: {

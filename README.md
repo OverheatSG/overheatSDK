@@ -1,10 +1,38 @@
 # overheatSDK
 
-Solana SDK for interacting with the Overheat program.
+TypeScript SDK for interacting with the Overheat Solana oracle program.
 
 ## Overview
 
-This repository contains the TypeScript SDK for the Overheat Solana program. The SDK provides a complete interface for interacting with the Overheat oracle program, including question registration, answer updates, and data retrieval.
+The Overheat SDK provides a complete interface for interacting with the Overheat oracle program on Solana, including:
+
+- **Question Registration**: Register new questions on-chain with rules stored on Arweave
+- **Answer Updates**: Update question answers with explanations
+- **Data Retrieval**: Query questions by address, time range, or get all questions
+- **Network Support**: Works with both devnet and mainnet
+
+## Installation
+
+### Using npm
+
+```bash
+npm install overheat-sdk
+```
+
+## Quick Start
+
+```typescript
+import { getAllQuestions, setNetwork } from 'overheat-sdk';
+
+// Set network: devnet(default), staging and main
+setNetwork('devnet');
+
+// Get all questions
+const questions = await getAllQuestions();
+console.log(`Found ${questions.length} questions`);
+```
+
+For complete API documentation, see the [package README](./js/README.md).
 
 ## Project Structure
 
@@ -12,109 +40,80 @@ This repository contains the TypeScript SDK for the Overheat Solana program. The
 overheatSDK/
 ├── js/                    # npm package source code
 │   ├── lib/              # Core SDK functions
-│   ├── utils/            # Utility functions
-│   ├── example/          # Example scripts
+│   ├── utils/            # Utility functions (Arweave, wallet)
 │   ├── index.ts          # Package entry point
 │   └── package.json      # npm package configuration
+├── example/              # Example scripts (use overheat-sdk package)
+│   ├── get_all_questions.ts
+│   ├── get_question_by_address.ts
+│   ├── get_questions_by_created_time.ts
+│   ├── register_question.ts
+│   └── update_answer.ts
+├── package.json          # Root package.json for running examples
 └── README.md             # This file
 ```
 
-## Installation
+## Running Examples
 
-### Using the npm Package
+The example scripts demonstrate how to use the SDK. They are located in the `example/` directory and use the published `overheat-sdk` npm package.
 
-The SDK is published as `overheat-sdk` on npm:
-
-```bash
-npm install overheat-sdk
-```
-
-For detailed installation and usage instructions, see the [package README](./js/README.md).
-
-### From Source
-
-If you want to develop or contribute:
-
-```bash
-# Clone the repository
-git clone https://github.com/OverheatSG/overheatSDK.git
-cd overheatSDK
-
-# Install dependencies
-cd js
-npm install
-
-# Build the package
-npm run build
-```
-
-## Development
-
-### Running Example Scripts
-
-The example scripts are located in `example/` and demonstrate how to use the SDK.
-
-To run the examples:
+### Setup
 
 ```bash
 # Install dependencies (including overheat-sdk)
 npm install
+```
 
-# Then run the examples:
+### Example Commands
 
+**Get all questions:**
 ```bash
-# Get all questions
 npx ts-node example/get_all_questions.ts
+```
 
-# Get a specific question
+**Get a specific question:**
+```bash
 npx ts-node example/get_question_by_address.ts <question_address>
+```
 
-# Get questions created after a specific time
-npx ts-node example/get_questions_by_created_time.ts <start_time>
-
+**Get questions created after a specific time:**
+```bash
 npx ts-node example/get_questions_by_created_time.ts 1704067200
+```
 
-# Register a question
-npx ts-node example/register_question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rules> [wallet_path]
+**Register a question:**
+```bash
+# Command format:
+# npx ts-node example/register_question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rules> [wallet_path]
+#
+# Parameters:
+#   question_text: The question text
+#   expected_expiration_time: Unix timestamp (seconds)
+#   latest_expiration_time: Unix timestamp (seconds)
+#   category: Category string (max 100 bytes)
+#   rules: Rules description string
+#   wallet_path: Optional wallet path (defaults to ~/.config/solana/id.json)
 
+# Example:
 npx ts-node example/register_question.ts \
-  "Will aliens visit Earth in 2026?" \
+  "Will Bitcoin reach $100,000 by the end of 2025?" \
   1735689600 \
   1735776000 \
-  "Science" \
-  "Must be confirmed by at least 3 major news outlets. UFO sightings alone do not count. The aliens must actually land or make contact."
-
-# Update answer
-npx ts-node example/update_answer.ts <question_address> <answer> <explanation> [wallet_path]
+  "Crypto" \
+  "Price must be confirmed by at least 3 major cryptocurrency exchanges. The price must be sustained for at least 24 consecutive hours."
 ```
 
-**Note:** The example scripts use the `overheat-sdk` npm package. Make sure you have installed it with `npm install overheat-sdk` before running the examples.
-
-npx ts-node example/update_answer.ts \
-  CJF2c5gbWhwykmijZb6Keqp8Bj1wkFi3B77WDrCRUXAq \
-  true \
-  "The Los Angeles Lakers won the NBA Finals 4-2 against their opponent. The championship was officially confirmed by the NBA on June 15, 2025."
-
-```
-
-See the [package README](./js/README.md) for detailed command examples.
-
-### Building
-
+**Update answer:**
 ```bash
-cd js
-npm run build
+npx ts-node example/update_answer.ts \
+  <question_address> \
+  true \
+  "Explanation of the answer"
 ```
-
-This compiles TypeScript to JavaScript in the `dist/` directory.
-
-### Publishing
-
-See the package's `package.json` for publishing scripts. The package is published to npm as `overheat-sdk`.
 
 ## Documentation
 
-- **Package Documentation**: See [js/README.md](./js/README.md) for complete API documentation and usage examples
+- **API Documentation**: See [js/README.md](./js/README.md) for complete API reference and usage examples
 - **GitHub Repository**: https://github.com/OverheatSG/overheatSDK
 - **Issues**: https://github.com/OverheatSG/overheatSDK/issues
 
