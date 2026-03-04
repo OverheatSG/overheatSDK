@@ -1,5 +1,5 @@
 {
-  "address": "DXT75zmao3Dcq9D2uHg5CMoaNRVj3X7BGiBsqhhAVYNq",
+  "address": "6h6XEcRsAEzRB8xjLfMzsUAQeuQsKX15NkBqVGzXAJ6Q",
   "metadata": {
     "name": "overheat",
     "version": "0.1.0",
@@ -93,6 +93,10 @@
         {
           "name": "explanation",
           "type": "string"
+        },
+        {
+          "name": "early_resolution_threshold",
+          "type": "f64"
         }
       ]
     }
@@ -190,6 +194,10 @@
                 44
               ]
             }
+          },
+          {
+            "name": "early_resolution_threshold",
+            "type": "f64"
           }
         ]
       }

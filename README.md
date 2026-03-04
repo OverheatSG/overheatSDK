@@ -109,6 +109,13 @@ npx ts-node example/update_answer.ts \
   <question_address> \
   true \
   "Explanation of the answer"
+
+# Example
+npx ts-node example/update_answer.ts \
+  FyCJs3t5uB8fECjYXC8J9VfYh5vSEAGMCWA9DFQr3KdZ \
+  true \
+  "Bitcoin reached $100,000 on December 15, 2024, confirmed by Coinbase, Binance, and Kraken exchanges." \
+  0.75
 ```
 
 ## Documentation

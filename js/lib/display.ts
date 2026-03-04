@@ -15,6 +15,9 @@ export function printQuestionDetail(question: QuestionInfo): void {
   console.log(`Rules: ${question.rules}`);
   console.log(`Answer: ${question.answer || "Not answered"}`);
   console.log(`Explanation: ${question.explanation}`);
+  if (question.earlyResolutionThreshold !== undefined) {
+    console.log(`Early Resolution Threshold: ${question.earlyResolutionThreshold}`);
+  }
   if (question.expectedExpirationTime) {
     console.log(`Expected Expiration Time: ${new Date(question.expectedExpirationTime * 1000).toISOString()}`);
   }
@@ -33,16 +36,18 @@ export function printQuestionDetail(question: QuestionInfo): void {
  * @param question - QuestionInfo object to display
  * @param index - Optional index number for the question in the list
  */
-export function printQuestionSummary(question: QuestionInfo, index?: number): void {
-  if (index !== undefined) {
-    console.log(`[${index + 1}]`);
-  }
+export function printQuestionSummary(question: QuestionInfo): void {
+  console.log("Question Summary:");
+  console.log("=".repeat(80));
   console.log(`  Address: ${question.address}`);
   console.log(`  Category: ${question.category || "N/A"}`);
   console.log(`  Question: ${question.questionText}`);
   console.log(`  Rules: ${question.rules}`);
   console.log(`  Answer: ${question.answer || "Not answered"}`);
   console.log(`  Explanation: ${question.explanation}`);
+  if (question.earlyResolutionThreshold !== undefined) {
+    console.log(`  Early Resolution Threshold: ${question.earlyResolutionThreshold}`);
+  }
   if (question.expectedExpirationTime) {
     console.log(`  Expected Expiration: ${new Date(question.expectedExpirationTime * 1000).toISOString()}`);
   }
@@ -70,8 +75,8 @@ export function printQuestionsList(questions: QuestionInfo[], header?: string): 
     return;
   }
   
-  questions.forEach((q, index) => {
-    printQuestionSummary(q, index);
+  questions.forEach((q) => {
+    printQuestionDetail(q);
   });
   
   if (header) {

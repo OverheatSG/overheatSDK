@@ -51,6 +51,8 @@ export interface QuestionInfo {
   category: string;
   /** Explanation string (provided when answer is updated) */
   explanation: string;
+  /** Early resolution threshold value (f64 on-chain) */
+  earlyResolutionThreshold: number;
   /** Rules description (fetched from Arweave) */
   rules: string;
   /** Answer: "Yes", "No", or null if not answered yet */

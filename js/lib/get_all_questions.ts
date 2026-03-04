@@ -56,6 +56,7 @@ export async function getAllQuestions(): Promise<QuestionInfo[]> {
       questionText: decodeBytesToString(questionData.questionText),
       category: decodeBytesToString(questionData.category),
       explanation: decodeBytesToString(questionData.explanation),
+      earlyResolutionThreshold: questionData.earlyResolutionThreshold,
       rules: rules,
       answer: questionData.answer === null ? null : questionData.answer ? "Yes" : "No",
     });
