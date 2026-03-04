@@ -84,7 +84,7 @@ npx ts-node example/get_questions_by_created_time.ts 1704067200
 **Register a question:**
 ```bash
 # Command format:
-# npx ts-node example/register_question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rules> [wallet_path]
+# npx ts-node example/register_question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rules> <early_resolution_threshold> [wallet_path]
 #
 # Parameters:
 #   question_text: The question text
@@ -92,6 +92,7 @@ npx ts-node example/get_questions_by_created_time.ts 1704067200
 #   latest_expiration_time: Unix timestamp (seconds)
 #   category: Category string (max 100 bytes)
 #   rules: Rules description string
+#   early_resolution_threshold: Floating point number (f64) for early resolution threshold
 #   wallet_path: Optional wallet path (defaults to ~/.config/solana/id.json)
 
 # Example:
@@ -100,7 +101,8 @@ npx ts-node example/register_question.ts \
   1735689600 \
   1735776000 \
   "Crypto" \
-  "Price must be confirmed by at least 3 major cryptocurrency exchanges. The price must be sustained for at least 24 consecutive hours."
+  "Price must be confirmed by at least 3 major cryptocurrency exchanges. The price must be sustained for at least 24 consecutive hours." \
+  0.75
 ```
 
 **Update answer:**
@@ -114,8 +116,7 @@ npx ts-node example/update_answer.ts \
 npx ts-node example/update_answer.ts \
   FyCJs3t5uB8fECjYXC8J9VfYh5vSEAGMCWA9DFQr3KdZ \
   true \
-  "Bitcoin reached $100,000 on December 15, 2024, confirmed by Coinbase, Binance, and Kraken exchanges." \
-  0.75
+  "Bitcoin reached $100,000 on December 15, 2024, confirmed by Coinbase, Binance, and Kraken exchanges."
 ```
 
 ## Documentation

@@ -21,7 +21,6 @@ export interface UpdateAnswerResult {
  * @param questionAddress - Public key address of the question account
  * @param answer - Boolean answer (true for Yes, false for No)
  * @param explanation - Explanation string (max 200 bytes)
- * @param earlyResolutionThreshold - Early resolution threshold as a floating point number (f64 on-chain)
  * @param wallet - Anchor wallet instance for signing transactions (must be the question authority)
  * @returns UpdateAnswerResult with transaction signature
  * @throws Error if update fails (e.g., unauthorized, invalid address)
@@ -30,7 +29,6 @@ export async function updateAnswer(
   questionAddress: string,
   answer: boolean,
   explanation: string,
-  earlyResolutionThreshold: number,
   wallet: anchor.Wallet
 ): Promise<UpdateAnswerResult> {
   const config = getConfig();
@@ -49,7 +47,7 @@ export async function updateAnswer(
   const questionPubkey = new PublicKey(questionAddress);
 
   const tx = await program.methods
-    .updateAnswer(answer, explanation, earlyResolutionThreshold)
+    .updateAnswer(answer, explanation)
     .accounts({
       question: questionPubkey,
       authority: wallet.publicKey,

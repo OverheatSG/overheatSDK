@@ -1,5 +1,5 @@
 {
-  "address": "7tGc2RHtscqnsxNgBAyB4CuyydoghgZgqtSuKN2YZpnk",
+  "address": "AbgR5xo8ED2aZ2XBwrZD2ehQwNNZQJ2eXs3LyA9ieaKa",
   "metadata": {
     "name": "overheat",
     "version": "0.1.0",
@@ -57,6 +57,10 @@
         {
           "name": "arweave_id",
           "type": "bytes"
+        },
+        {
+          "name": "early_resolution_threshold",
+          "type": "f64"
         }
       ]
     },
@@ -93,10 +97,6 @@
         {
           "name": "explanation",
           "type": "string"
-        },
-        {
-          "name": "early_resolution_threshold",
-          "type": "f64"
         }
       ]
     }

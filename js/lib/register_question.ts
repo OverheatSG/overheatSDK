@@ -19,6 +19,8 @@ export interface RegisterQuestionParams {
   category: string;
   /** Rules description string (stored on Arweave) */
   rules: string;
+  /** Early resolution threshold as a floating point number (f64 on-chain) */
+  earlyResolutionThreshold: number;
 }
 
 /**
@@ -106,7 +108,8 @@ export async function registerQuestion(
         new anchor.BN(params.expectedExpirationTime),
         new anchor.BN(params.latestExpirationTime),
         params.category,
-        arweaveIdForAnchor // Pass Buffer directly - Anchor expects Buffer for bytes type
+        arweaveIdForAnchor, // Pass Buffer directly - Anchor expects Buffer for bytes type
+        params.earlyResolutionThreshold // Early resolution threshold (f64)
       )
       .accounts({
         question: questionPda, // Anchor will verify this matches the seeds derived from instruction params
