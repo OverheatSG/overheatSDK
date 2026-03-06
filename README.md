@@ -10,6 +10,7 @@ The Overheat SDK provides a complete interface for interacting with the Overheat
 - **Answer Updates**: Update question answers with explanations
 - **Data Retrieval**: Query questions by address, time range, or get all questions
 - **Network Support**: Works with both devnet and mainnet
+- **Wallet Utilities**: Load/save wallet from JSON keypair file, generate new keypair
 
 ## Installation
 
@@ -32,6 +33,12 @@ const questions = await getAllQuestions();
 console.log(`Found ${questions.length} questions`);
 ```
 
+### Wallet utilities
+
+- **`loadWallet(walletPath)`** – Load a Solana wallet from a JSON keypair file (64-byte secret key as JSON array). Returns `{ keypair, wallet }`.
+- **`saveWallet(wallet, walletPath)`** – Save an Anchor wallet to a JSON keypair file (writes the full 64-byte secret key so it can be loaded later with `loadWallet`).
+- **`generateWallet()`** – Generate a new Solana keypair and return `{ keypair, wallet }`.
+
 For complete API documentation, see the [package README](./js/README.md).
 
 ## Project Structure
@@ -48,7 +55,8 @@ overheatSDK/
 │   ├── get_question_by_address.ts
 │   ├── get_questions_by_created_time.ts
 │   ├── register_question.ts
-│   └── update_answer.ts
+│   ├── update_answer.ts
+│   └── wallet_example.ts
 ├── package.json          # Root package.json for running examples
 └── README.md             # This file
 ```
@@ -79,6 +87,12 @@ npx ts-node example/get_question_by_address.ts <question_address>
 **Get questions created after a specific time:**
 ```bash
 npx ts-node example/get_questions_by_created_time.ts 1704067200
+```
+
+**Test wallet utilities (generateWallet, saveWallet, loadWallet):**
+```bash
+npx ts-node example/wallet_example.ts [output_path]
+# Default output: ./example-wallet.json
 ```
 
 **Register a question:**
@@ -114,7 +128,7 @@ npx ts-node example/update_answer.ts \
 
 # Example
 npx ts-node example/update_answer.ts \
-  FyCJs3t5uB8fECjYXC8J9VfYh5vSEAGMCWA9DFQr3KdZ \
+  ALMfPWmvhwre6iDV77ABxAb1JmFMvg3uMDFNXYpKz3Nt \
   true \
   "Bitcoin reached $100,000 on December 15, 2024, confirmed by Coinbase, Binance, and Kraken exchanges."
 ```

@@ -8,10 +8,11 @@
     "example:get-by-address": "ts-node example/get_question_by_address.ts",
     "example:get-by-time": "ts-node example/get_questions_by_created_time.ts",
     "example:register": "ts-node example/register_question.ts",
-    "example:update-answer": "ts-node example/update_answer.ts"
+    "example:update-answer": "ts-node example/update_answer.ts",
+    "example:wallet": "ts-node example/wallet_example.ts"
   },
   "dependencies": {
-    "overheat-sdk": "^0.1.9"
+    "overheat-sdk": "^0.1.10"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
