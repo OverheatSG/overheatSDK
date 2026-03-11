@@ -4,15 +4,15 @@
   "description": "Examples for overheat-sdk",
   "private": true,
   "scripts": {
-    "example:get-all": "ts-node example/get_all_questions.ts",
-    "example:get-by-address": "ts-node example/get_question_by_address.ts",
-    "example:get-by-time": "ts-node example/get_questions_by_created_time.ts",
-    "example:register": "ts-node example/register_question.ts",
-    "example:update-answer": "ts-node example/update_answer.ts",
-    "example:wallet": "ts-node example/wallet_example.ts"
+    "example:get-all": "ts-node example/get-all-questions.ts",
+    "example:get-by-address": "ts-node example/get-question-by-address.ts",
+    "example:get-by-time": "ts-node example/get-questions-by-time-range.ts",
+    "example:register": "ts-node example/register-question.ts",
+    "example:update-answer": "ts-node example/update-answer.ts",
+    "example:wallet": "ts-node example/wallet-example.ts"
   },
   "dependencies": {
-    "overheat-sdk": "^0.1.10"
+    "overheat-sdk": "file:./js"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

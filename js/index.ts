@@ -1,13 +1,20 @@
-export * from "./lib/types";
-export * from "./lib/config";
-export * from "./lib/register_question";
-export * from "./lib/update_answer";
-export * from "./lib/get_all_questions";
-export * from "./lib/get_question_by_address";
-export * from "./lib/get_questions_by_time_range";
-export * from "./lib/display";
-export * from "./utils/arweave";
-export * from "./utils/wallet";
+export {
+  OverheatSDK,
+  SOL_DEVNET_CONFIG,
+  SOL_STAGING_CONFIG,
+  EVM_BASE_SEPOLIA_CONFIG,
+} from "./lib/sdk";
+export type {
+  RegisterQuestionResult,
+  UpdateAnswerOptions,
+  ChainSigner,
+  QuestionInfo,
+  RegisterQuestionParams,
+  TimeRangeFilter,
+} from "./lib/sdk";
 
-// Export configuration management functions
-export { setNetwork, getNetwork, getConfig, type Network, type NetworkConfig } from "./lib/config";
+export type { NetworkConfig } from "./lib/config";
+
+export * from "./lib/sol";
+export * from "./lib/arweave/arweave";
+export * as evm from "./lib/evm";

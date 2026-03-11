@@ -1,16 +1,16 @@
 # overheatSDK
 
-TypeScript SDK for interacting with the Overheat Solana oracle program.
+TypeScript SDK for interacting with the Overheat oracle program on Solana & EVM.
 
 ## Overview
 
-The Overheat SDK provides a complete interface for interacting with the Overheat oracle program on Solana, including:
+The Overheat SDK provides a complete interface for interacting with the Overheat oracle, including:
 
 - **Question Registration**: Register new questions on-chain with rules stored on Arweave
 - **Answer Updates**: Update question answers with explanations
 - **Data Retrieval**: Query questions by address, time range, or get all questions
-- **Network Support**: Works with both devnet and mainnet
-- **Wallet Utilities**: Load/save wallet from JSON keypair file, generate new keypair
+- **Multi-network Support**: Works with Solana devnet/staging and EVM Base Sepolia
+- **Wallet Utilities**: Simple helpers to generate, load, and save wallets
 
 ## Installation
 
@@ -23,21 +23,41 @@ npm install overheat-sdk
 ## Quick Start
 
 ```typescript
-import { getAllQuestions, setNetwork } from 'overheat-sdk';
+import {
+  OverheatSDK,
+  EVM_BASE_SEPOLIA_CONFIG,
+} from "overheat-sdk";
 
-// Set network: devnet(default), staging and main
-setNetwork('devnet');
+async function main() {
+  // 1. Create SDK with a built-in network config
+  const sdk = new OverheatSDK({ config: EVM_BASE_SEPOLIA_CONFIG });
 
-// Get all questions
-const questions = await getAllQuestions();
-console.log(`Found ${questions.length} questions`);
+  // 2. Query all questions
+  const questions = await sdk.getAllQuestions();
+
+  console.log(
+    JSON.stringify(
+      questions,
+      (_, v) => (typeof v === "bigint" ? v.toString() : v),
+      2,
+    ),
+  );
+}
+
+void main();
 ```
 
-### Wallet utilities
+### Wallet utilities (high level)
 
-- **`loadWallet(walletPath)`** – Load a Solana wallet from a JSON keypair file (64-byte secret key as JSON array). Returns `{ keypair, wallet }`.
-- **`saveWallet(wallet, walletPath)`** – Save an Anchor wallet to a JSON keypair file (writes the full 64-byte secret key so it can be loaded later with `loadWallet`).
-- **`generateWallet()`** – Generate a new Solana keypair and return `{ keypair, wallet }`.
+- **Solana (`sol-devnet` / `sol-staging`)**
+  - `generateWallet()` – Generate a new keypair and return `{ solWallet, solKeypair }`.
+  - `loadWallet(walletPath)` – Load a keypair from JSON file and return `{ solWallet, solKeypair }`.
+  - `saveWallet(wallet, walletPath)` – Save an Anchor wallet to a JSON keypair file.
+
+- **EVM (`evm-base-sepolia`)**
+  - `evm.generateWallet()` – Generate a new EVM wallet and return `{ privateKey }`.
+  - `evm.loadWallet(walletPath)` – Load a private key from file and return `{ privateKey }`.
+  - `evm.saveWallet(privateKey, walletPath)` – Save a private key (hex) to file.
 
 For complete API documentation, see the [package README](./js/README.md).
 
@@ -45,25 +65,37 @@ For complete API documentation, see the [package README](./js/README.md).
 
 ```
 overheatSDK/
-├── js/                    # npm package source code
-│   ├── lib/              # Core SDK functions
-│   ├── utils/            # Utility functions (Arweave, wallet)
-│   ├── index.ts          # Package entry point
-│   └── package.json      # npm package configuration
-├── example/              # Example scripts (use overheat-sdk package)
-│   ├── get_all_questions.ts
-│   ├── get_question_by_address.ts
-│   ├── get_questions_by_created_time.ts
-│   ├── register_question.ts
-│   ├── update_answer.ts
-│   └── wallet_example.ts
-├── package.json          # Root package.json for running examples
-└── README.md             # This file
+├── js/                      # npm package source code
+│   ├── lib/                 # Core SDK implementation
+│   ├── index.ts             # Package entry point
+│   └── package.json         # npm package configuration
+├── examples/
+│   ├── basic/               # Easiest-to-read scripts (const parameters)
+│   │   ├── get-all-questions.ts
+│   │   ├── get-question-by-address.ts
+│   │   ├── get-questions-by-created-time.ts
+│   │   ├── register-question.ts
+│   │   ├── update-answer.ts
+│   │   ├── wallet-example-sol.ts
+│   │   └── wallet-example-evm.ts
+│   └── cli/                 # CLI-oriented scripts using process.argv
+│       ├── get-all-questions.ts
+│       ├── get-question-by-address.ts
+│       ├── get-questions-by-created-time.ts
+│       ├── register-question.ts
+│       ├── update-answer.ts
+│       ├── wallet-example-sol.ts
+│       └── wallet-example-evm.ts
+├── package.json             # Root package.json for running examples
+└── README.md                # This file
 ```
 
 ## Running Examples
 
-The example scripts demonstrate how to use the SDK. They are located in the `example/` directory and use the published `overheat-sdk` npm package.
+The example scripts demonstrate how to use the SDK in two styles:
+
+- `examples/basic/`: All parameters are hard-coded `const` values, suitable for reading & copy-paste.
+- `examples/cli/`: Command-line tools that parse `process.argv`.
 
 ### Setup
 
@@ -72,65 +104,46 @@ The example scripts demonstrate how to use the SDK. They are located in the `exa
 npm install
 ```
 
-### Example Commands
+### Basic examples
 
-**Get all questions:**
+Run them directly with `ts-node` (or your own build tooling):
+
 ```bash
-npx ts-node example/get_all_questions.ts
+npx ts-node examples/basic/get-all-questions.ts
+npx ts-node examples/basic/register-question.ts
+npx ts-node examples/basic/update-answer.ts
 ```
 
-**Get a specific question:**
-```bash
-npx ts-node example/get_question_by_address.ts <question_address>
-```
+These scripts hard-code the network, question content, and times, so they are easier to read and copy into your own code.
 
-**Get questions created after a specific time:**
-```bash
-npx ts-node example/get_questions_by_created_time.ts 1704067200
-```
+### CLI examples
 
-**Test wallet utilities (generateWallet, saveWallet, loadWallet):**
-```bash
-npx ts-node example/wallet_example.ts [output_path]
-# Default output: ./example-wallet.json
-```
+If you prefer passing parameters from the command line, use `examples/cli`:
 
-**Register a question:**
 ```bash
-# Command format:
-# npx ts-node example/register_question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rules> <early_resolution_threshold> [wallet_path]
-#
-# Parameters:
-#   question_text: The question text
-#   expected_expiration_time: Unix timestamp (seconds)
-#   latest_expiration_time: Unix timestamp (seconds)
-#   category: Category string (max 100 bytes)
-#   rules: Rules description string
-#   early_resolution_threshold: Floating point number (f64) for early resolution threshold
-#   wallet_path: Optional wallet path (defaults to ~/.config/solana/id.json)
+# Get all questions
+npx ts-node examples/cli/get-all-questions.ts
 
-# Example:
-npx ts-node example/register_question.ts \
-  "Will Bitcoin reach $100,000 by the end of 2025?" \
+# Get question by address
+npx ts-node examples/cli/get-question-by-address.ts <question_address>
+
+# Get questions by created time
+npx ts-node examples/cli/get-questions-by-created-time.ts 1704067200 1704153600
+
+# Register question (see script for exact parameter order)
+npx ts-node examples/cli/register-question.ts \
+  "Will BTC trade above $100k by 2030-01-01?" \
   1735689600 \
   1735776000 \
   "Crypto" \
-  "Price must be confirmed by at least 3 major cryptocurrency exchanges. The price must be sustained for at least 24 consecutive hours." \
+  "Resolution according to CoinGecko BTC/USD daily close." \
   0.75
-```
 
-**Update answer:**
-```bash
-npx ts-node example/update_answer.ts \
+# Update answer
+npx ts-node examples/cli/update-answer.ts \
   <question_address> \
   true \
   "Explanation of the answer"
-
-# Example
-npx ts-node example/update_answer.ts \
-  ALMfPWmvhwre6iDV77ABxAb1JmFMvg3uMDFNXYpKz3Nt \
-  true \
-  "Bitcoin reached $100,000 on December 15, 2024, confirmed by Coinbase, Binance, and Kraken exchanges."
 ```
 
 ## Documentation

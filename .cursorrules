@@ -1,0 +1,91 @@
+推荐设计
+
+创建 SDK 实例：
+
+const sdk = new OverheatSDK({
+  network: "sol-devnet"
+})
+
+或：
+
+const sdk = new OverheatSDK({
+  network: "evm-base-sepolia"
+})
+
+SDK 内部：
+
+class OverheatSDK {
+
+  readonly network: Network
+  readonly config: NetworkConfig
+
+  constructor(opts: { network?: Network }) {
+    this.network = opts.network ?? DEFAULT_NETWORK
+    this.config = NETWORK_CONFIGS[this.network]
+  }
+
+}
+
+router 就变简单
+async updateAnswer(
+  signer: AnySigner,
+  options: UpdateAnswerOptions
+): Promise<string> {
+
+  const { questionAddress, answer, explanation } = options
+
+  if (this.network.startsWith("sol")) {
+
+    const wallet = signer as anchor.Wallet
+
+    const r = await sol.update_answer(
+      questionAddress,
+      answer,
+      explanation,
+      wallet,
+      this.config
+    )
+
+    return r.transaction
+  }
+
+  if (this.network.startsWith("evm")) {
+
+    const evmSigner = signer as EvmSigner
+
+    const result = await evm.update_answer(
+      evmSigner,
+      questionAddress,
+      answer,
+      explanation,
+      this.config
+    )
+
+    return result.txHash
+  }
+
+  throw new Error(`Unsupported network ${this.network}`)
+}
+
+
+用户使用方式（体验很好）
+Solana
+const sdk = new OverheatSDK({
+  network: "sol-devnet"
+})
+
+await sdk.updateAnswer(wallet, {
+  questionAddress,
+  answer,
+  explanation
+})
+EVM
+const sdk = new OverheatSDK({
+  network: "evm-base-sepolia"
+})
+
+await sdk.updateAnswer(signer, {
+  questionAddress,
+  answer,
+  explanation
+})
