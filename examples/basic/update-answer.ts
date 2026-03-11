@@ -1,4 +1,4 @@
-import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG, evm } from "overheat-sdk";
+import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG,SOL_STAGING_CONFIG,SOL_DEVNET_CONFIG, evm } from "overheat-sdk";
 
 // Example constants
 const WALLET_PATH = "./example-evm-key.key";

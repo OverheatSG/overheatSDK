@@ -4,15 +4,23 @@
   "description": "Examples for overheat-sdk",
   "private": true,
   "scripts": {
-    "example:get-all": "ts-node example/get-all-questions.ts",
-    "example:get-by-address": "ts-node example/get-question-by-address.ts",
-    "example:get-by-time": "ts-node example/get-questions-by-time-range.ts",
-    "example:register": "ts-node example/register-question.ts",
-    "example:update-answer": "ts-node example/update-answer.ts",
-    "example:wallet": "ts-node example/wallet-example.ts"
+    "example:basic:get-all": "ts-node examples/basic/get-all-questions.ts",
+    "example:basic:get-by-address": "ts-node examples/basic/get-question-by-address.ts",
+    "example:basic:get-by-time": "ts-node examples/basic/get-questions-by-created-time.ts",
+    "example:basic:register": "ts-node examples/basic/register-question.ts",
+    "example:basic:update-answer": "ts-node examples/basic/update-answer.ts",
+    "example:basic:wallet-sol": "ts-node examples/basic/wallet-example-sol.ts",
+    "example:basic:wallet-evm": "ts-node examples/basic/wallet-example-evm.ts",
+    "example:cli:get-all": "ts-node examples/cli/get-all-questions.ts",
+    "example:cli:get-by-address": "ts-node examples/cli/get-question-by-address.ts",
+    "example:cli:get-by-time": "ts-node examples/cli/get-questions-by-created-time.ts",
+    "example:cli:register": "ts-node examples/cli/register-question.ts",
+    "example:cli:update-answer": "ts-node examples/cli/update-answer.ts",
+    "example:cli:wallet-sol": "ts-node examples/cli/wallet-example-sol.ts",
+    "example:cli:wallet-evm": "ts-node examples/cli/wallet-example-evm.ts"
   },
   "dependencies": {
-    "overheat-sdk": "file:./js"
+    "overheat-sdk": "0.2.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

@@ -1,6 +1,6 @@
 import {
   OverheatSDK,
-  EVM_BASE_SEPOLIA_CONFIG,
+  EVM_BASE_SEPOLIA_CONFIG,SOL_STAGING_CONFIG,SOL_DEVNET_CONFIG,
   type TimeRangeFilter,
 } from "overheat-sdk";
 

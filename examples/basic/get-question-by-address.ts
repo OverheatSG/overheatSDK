@@ -1,7 +1,7 @@
-import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG } from "overheat-sdk";
+import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG,SOL_STAGING_CONFIG,SOL_DEVNET_CONFIG } from "overheat-sdk";
 
 // Hard-coded example question address
-const QUESTION_ADDRESS = "0x0000000000000000000000000000000000000000";
+const QUESTION_ADDRESS = "0x0619146fc7b4038792929041835c309fa352b74ccdf81664a6b946d44444157f";
 
 async function main(): Promise<void> {
 

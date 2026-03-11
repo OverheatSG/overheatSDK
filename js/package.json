@@ -1,7 +1,7 @@
 {
   "name": "overheat-sdk",
-  "version": "0.1.10",
-  "description": "Solana SDK for interacting with the Overheat program",
+  "version": "0.2.1",
+  "description": "TypeScript SDK for the Overheat oracle on Solana and EVM",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
