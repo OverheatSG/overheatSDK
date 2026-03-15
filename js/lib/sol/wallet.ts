@@ -13,6 +13,17 @@ export function loadWallet(walletPath: string): {
   return { solWallet, solKeypair };
 }
 
+export function loadWalletFromEnvValue(envValue: string): {
+  solWallet: anchor.Wallet;
+  solKeypair: Keypair;
+} {
+  const solKeypair = anchor.web3.Keypair.fromSecretKey(
+    Buffer.from(JSON.parse(envValue) as number[])
+  );
+  const solWallet = new anchor.Wallet(solKeypair);
+  return { solWallet, solKeypair };
+}
+
 export function generateWallet(): {
   solWallet: anchor.Wallet;
   solKeypair: Keypair;

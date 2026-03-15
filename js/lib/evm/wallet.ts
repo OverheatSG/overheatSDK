@@ -9,6 +9,12 @@ export function loadWallet(walletPath: string): { privateKey: string } {
   return { privateKey };
 }
 
+export function loadWalletFromEnvValue(envValue: string): { privateKey: string } {
+  const raw = envValue.trim();
+  const privateKey = raw.startsWith("0x") ? raw : "0x" + raw;
+  return { privateKey };
+}
+
 export function generateWallet(): { privateKey: string } {
   const wallet = Wallet.createRandom();
   return { privateKey: wallet.privateKey };
