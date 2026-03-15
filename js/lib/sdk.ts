@@ -56,7 +56,7 @@ export const EVM_BASE_SEPOLIA_CONFIG: NetworkConfig = {
   idlFileName: "",
   explorerCluster: "",
   explorerUrl: "https://sepolia.basescan.org",
-  contractAddress: "0xEC7f96DB27a4C393994509433af8dEE98982E333",
+  contractAddress: "0xa04b62817c83D196899a11140FAE5Ea42A55A4e4",
 };
 
 export class OverheatSDK {
