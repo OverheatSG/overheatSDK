@@ -9,6 +9,10 @@ export interface QuestionDescription {
   rules: string;
 }
 
+export interface ExplanationDescription {
+  explanation: string;
+}
+
 export interface ArweaveUploadResult {
   transactionId: string;
   url: string;
@@ -127,6 +131,33 @@ export async function uploadQuestionToArweaveWithSol(
   };
 }
 
+export async function fetchExplanationFromArweave(
+  transactionId: string,
+  config: NetworkConfig
+): Promise<ExplanationDescription> {
+  const base = config.irysGateway?.trim();
+  if (!base) {
+    throw new Error(
+      "irysGateway is not configured. Set it in the SDK config for the current network."
+    );
+  }
+  const irysUrl = `${base.replace(/\/$/, "")}/${transactionId}`;
+  const response = await fetch(irysUrl, {
+    signal: AbortSignal.timeout(10000),
+  });
+
+  if (response.ok) {
+    const data = (await response.json()) as Record<string, unknown>;
+    if (data && typeof data.explanation === "string") {
+      return { explanation: data.explanation };
+    }
+  }
+
+  throw new Error(
+    `Failed to fetch explanation from Arweave for ID: ${transactionId}`
+  );
+}
+
 export async function uploadQuestionToArweaveWithEvm(
   questionData: {
     questionText: string;
@@ -181,4 +212,86 @@ export async function uploadQuestionToArweaveWithEvm(
     url: gatewayUrl,
     fullId,
   };
+}
+
+export async function uploadExplanationToArweaveWithSol(
+  explanation: string,
+  walletKeypair: Keypair,
+  config: NetworkConfig
+): Promise<ArweaveUploadResult> {
+  const description: ExplanationDescription = { explanation };
+  const data = JSON.stringify(description, null, 2);
+  const dataBuffer = Buffer.from(data, "utf8");
+
+  const irys = new Irys({
+    url: config.irysNode,
+    token: "solana",
+    key: walletKeypair.secretKey,
+    config: {
+      providerUrl: config.rpcUrl,
+    },
+  });
+
+  const receipt = await irys.upload(dataBuffer, {
+    tags: [
+      { name: "Content-Type", value: "application/json" },
+      { name: "App-Name", value: "Overheat-Explanation" },
+      { name: "App-Version", value: "1.0.0" },
+    ],
+  });
+
+  let fullId = receipt.id.trim();
+  if (fullId.length === 43) {
+    fullId = fullId + " ";
+  }
+  if (fullId.length !== 44) {
+    throw new Error(
+      `Invalid Arweave ID length: ${fullId.length} (expected 43 or 44). ID: "${fullId}"`
+    );
+  }
+  const gatewayUrl = `${config.irysGateway}/${fullId}`;
+  return { transactionId: fullId, url: gatewayUrl, fullId };
+}
+
+export async function uploadExplanationToArweaveWithEvm(
+  explanation: string,
+  evmPrivateKeyHex: string,
+  config: NetworkConfig,
+  network: string
+): Promise<ArweaveUploadResult> {
+  const description: ExplanationDescription = { explanation };
+  const data = JSON.stringify(description, null, 2);
+
+  const key = evmPrivateKeyHex.startsWith("0x")
+    ? evmPrivateKeyHex
+    : "0x" + evmPrivateKeyHex;
+
+  const useDevnet = network === "evm-base-sepolia";
+  const rpcUrl = config.rpcUrl;
+
+  let uploader = Uploader(BaseEth).withWallet(key);
+  if (useDevnet && rpcUrl) {
+    uploader = uploader.withRpc(rpcUrl).devnet();
+  }
+  const irysUploader = await uploader;
+
+  const receipt = await irysUploader.upload(data, {
+    tags: [
+      { name: "Content-Type", value: "application/json" },
+      { name: "App-Name", value: "Overheat-Explanation" },
+      { name: "App-Version", value: "1.0.0" },
+    ],
+  });
+
+  let fullId = (receipt?.id ?? receipt).toString().trim();
+  if (fullId.length === 43) {
+    fullId = fullId + " ";
+  }
+  if (fullId.length !== 44) {
+    throw new Error(
+      `Invalid Arweave ID length: ${fullId.length} (expected 43 or 44). ID: "${fullId}"`
+    );
+  }
+  const gatewayUrl = `${config.irysGateway}/${fullId}`;
+  return { transactionId: fullId, url: gatewayUrl, fullId };
 }

@@ -20,7 +20,7 @@
     "example:cli:wallet-evm": "ts-node examples/cli/wallet-example-evm.ts"
   },
   "dependencies": {
-    "overheat-sdk": "0.2.3"
+    "overheat-sdk": "0.2.4"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

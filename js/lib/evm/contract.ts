@@ -13,8 +13,8 @@ const ERROR_HINTS: Record<string, string> = {
   QuestionAlreadyExists:
     "Same authority + question_text already registered. Use a different question or wallet.",
   QuestionTooLong:
-    "question_text (max 500), category (max 100), or explanation (max 200) exceeded.",
-  InvalidArweaveId: "arweave_id must be exactly 44 bytes.",
+    "question_text (max 500), category (max 100), outcome labels (max 20 chars), or array lengths exceeded.",
+  InvalidArweaveId: "Arweave id bytes must be exactly 44.",
   QuestionDoesNotExist: "No question with this questionId.",
   Unauthorized: "Only the question authority can call this.",
   IndexOutOfBounds: "Index out of range.",
@@ -25,11 +25,12 @@ interface RawQuestion {
   created_at: bigint;
   expected_expiration_time: bigint;
   latest_expiration_time: bigint;
-  answer: number;
+  answer: bigint;
+  outcomes: string;
   question_text: string;
   category: string;
-  explanation: string;
-  arweave_id: string;
+  explanation_arweave_id: string;
+  rules_arweave_id: string;
   early_resolution_threshold: bigint;
 }
 
@@ -67,9 +68,14 @@ export function normalizeQuestion(
   if (!raw || raw.authority === ethers.ZeroAddress) {
     return null;
   }
-  const answerNum = Number(raw.answer ?? 0);
-  const hasAnswer = answerNum !== 0;
-  const answerBool = answerNum === 2;
+  const outcomesStr = raw.outcomes ?? "";
+  const outcomesArray = outcomesStr ? outcomesStr.split("|").slice(0, 30) : [];
+  const answerIndexRaw = Number(raw.answer ?? -1n);
+  const answerIndex = answerIndexRaw >= 0 ? answerIndexRaw : null;
+  const aggregatedAnswer =
+    answerIndex != null && answerIndex >= 0 && answerIndex < outcomesArray.length
+      ? outcomesArray[answerIndex]
+      : null;
   const earlyStr =
     raw.early_resolution_threshold != null
       ? ethers.formatEther(raw.early_resolution_threshold)
@@ -82,9 +88,10 @@ export function normalizeQuestion(
     latestExpirationTime: raw.latest_expiration_time ?? 0n,
     questionText: raw.question_text ?? "",
     category: raw.category ?? "",
-    explanation: raw.explanation ?? "",
+    explanation: "",
+    outcomes: outcomesArray,
     rules: "",
-    answer: hasAnswer ? (answerBool ? "Yes" : "No") : null,
+    aggregatedAnswer,
     earlyResolutionThreshold: parseFloat(earlyStr) || 0,
   };
 }

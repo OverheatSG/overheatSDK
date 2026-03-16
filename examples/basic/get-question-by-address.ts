@@ -1,12 +1,13 @@
 import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG,SOL_STAGING_CONFIG,SOL_DEVNET_CONFIG } from "overheat-sdk";
 
+const ENV =SOL_DEVNET_CONFIG
 // Hard-coded example question address
 const QUESTION_ADDRESS = "0x0619146fc7b4038792929041835c309fa352b74ccdf81664a6b946d44444157f";
 
 async function main(): Promise<void> {
 
     // config: EVM_BASE_SEPOLIA_CONFIG, SOL_STAGING_CONFIG, SOL_DEVNET_CONFIG
-  const sdk = new OverheatSDK({ config: EVM_BASE_SEPOLIA_CONFIG });
+  const sdk = new OverheatSDK({ config: ENV });
   const question = await sdk.getQuestionByAddress(QUESTION_ADDRESS);
   console.log(
     JSON.stringify(

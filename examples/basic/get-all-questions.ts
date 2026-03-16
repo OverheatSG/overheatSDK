@@ -1,9 +1,11 @@
 import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG,SOL_STAGING_CONFIG,SOL_DEVNET_CONFIG } from "overheat-sdk";
 
+const ENV =SOL_DEVNET_CONFIG
+
 async function main(): Promise<void> {
 
   // config: EVM_BASE_SEPOLIA_CONFIG, SOL_STAGING_CONFIG, SOL_DEVNET_CONFIG
-  const sdk = new OverheatSDK({ config: EVM_BASE_SEPOLIA_CONFIG });
+  const sdk = new OverheatSDK({ config: ENV });
   const questions = await sdk.getAllQuestions();
   console.log(
     JSON.stringify(

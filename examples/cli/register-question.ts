@@ -1,15 +1,14 @@
 #!/usr/bin/env node
 
-import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG, evm } from "overheat-sdk";
+import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG } from "overheat-sdk";
 
 const sdk = new OverheatSDK({ config: EVM_BASE_SEPOLIA_CONFIG });
-const signer = { chain: "evm" as const, privateKeyHex: evm.loadWallet("./example-evm-key.key").privateKey };
 
 if (require.main === module) {
   const args = process.argv.slice(2);
-  if (args.length < 6) {
+  if (args.length < 7) {
     console.error(
-      "Usage: register-question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rules> <early_resolution_threshold> [credential_path]"
+      "Usage: register-question.ts <question_text> <expected_expiration_time> <latest_expiration_time> <category> <rules> <early_resolution_threshold> <outcomes_json> [credential_path]"
     );
     console.error("  expected_expiration_time: Unix timestamp (seconds)");
     console.error("  latest_expiration_time: Unix timestamp (seconds)");
@@ -17,6 +16,9 @@ if (require.main === module) {
     console.error("  rules: Rules description string");
     console.error(
       "  early_resolution_threshold: Number as string (e.g. 0.75)"
+    );
+    console.error(
+      '  outcomes_json: JSON array of up to 30 outcome strings, e.g. ["Yes","No","Tie",...].'
     );
     console.error(
       "  credential_path: Optional. Overridden by env SOLANA_KEYPAIR_PATH or EVM_KEY_PATH."
@@ -42,6 +44,7 @@ if (require.main === module) {
   const category = args[3];
   const rules = args[4];
   const earlyResolutionThresholdRaw = args[5];
+  const outcomesRaw = args[6];
 
   if (isNaN(expectedExpirationTime) || isNaN(latestExpirationTime)) {
     console.error(
@@ -56,6 +59,20 @@ if (require.main === module) {
     process.exit(1);
   }
 
+  let outcomes: string[];
+  try {
+    const parsed = JSON.parse(outcomesRaw);
+    if (!Array.isArray(parsed)) {
+      throw new Error("outcomes_json must be a JSON array");
+    }
+    outcomes = parsed.map((v) => String(v)).slice(0, 30);
+  } catch (e) {
+    console.error("Error: outcomes_json must be a valid JSON array of strings");
+    process.exit(1);
+  }
+
+  const signer = await sdk.loadWallet("./example-evm-key.key");
+
   sdk
     .registerQuestion(signer, {
       questionText,
@@ -64,6 +81,7 @@ if (require.main === module) {
       category,
       rules,
       earlyResolutionThreshold: earlyResolutionThresholdRaw,
+      outcomes,
     })
     .then((result) => {
       console.log("\n✅ Question registered successfully!");

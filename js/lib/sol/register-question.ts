@@ -1,8 +1,8 @@
 import * as anchor from "@coral-xyz/anchor";
-import * as crypto from "crypto";
 import { getProgramId, getIdl, encodeArweaveId } from "./types";
 import type { NetworkConfig } from "../config";
 import type { RegisterQuestionParams } from "../types";
+import { normalizeOutcomes } from "../utils/outcomes";
 
 export async function register_question(
   params: RegisterQuestionParams,
@@ -23,21 +23,23 @@ export async function register_question(
   anchor.setProvider(provider);
 
   const program = new anchor.Program(idl as anchor.Idl, provider) as anchor.Program;
-  const arweaveIdForAnchor = encodeArweaveId(arweaveId.trim());
+  const rulesArweaveIdForAnchor = encodeArweaveId(arweaveId.trim());
   const earlyThreshold = parseFloat(params.earlyResolutionThreshold) || 0;
 
-  const questionTextBytes = Buffer.from(params.questionText, "utf8");
-  const questionHash = crypto
-    .createHash("sha256")
-    .update(questionTextBytes)
-    .digest();
-  const questionHashPrefix = questionHash.slice(0, 8);
+  const normalizedOutcomes = normalizeOutcomes(params.outcomes).join("|");
 
   const [questionPda] = anchor.web3.PublicKey.findProgramAddressSync(
     [
       Buffer.from("question"),
       wallet.publicKey.toBuffer(),
-      questionHashPrefix,
+      // Same seeds as on-chain program: sha256(question_text).prefix(8)
+      Buffer.from(
+        // use Node crypto here to match on-chain sha256
+        require("crypto")
+          .createHash("sha256")
+          .update(Buffer.from(params.questionText, "utf8"))
+          .digest()
+      ).subarray(0, 8),
     ],
     programId
   );
@@ -48,7 +50,8 @@ export async function register_question(
       new anchor.BN(params.expectedExpirationTime),
       new anchor.BN(params.latestExpirationTime),
       params.category,
-      arweaveIdForAnchor,
+      normalizedOutcomes,
+      Array.from(rulesArweaveIdForAnchor),
       earlyThreshold
     )
     .accounts({

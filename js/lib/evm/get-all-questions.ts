@@ -2,10 +2,7 @@ import { ethers } from "ethers";
 import type { NetworkConfig } from "../config";
 import { getContract, normalizeQuestion } from "./contract";
 import type { QuestionInfo } from "../types";
-import {
-  fetchQuestionFromArweave,
-  decodeArweaveId,
-} from "../arweave/arweave";
+import { attachOffchainMetadata } from "./utils";
 
 export async function get_all_questions(config: NetworkConfig): Promise<QuestionInfo[]> {
   const provider = new ethers.JsonRpcProvider(config.rpcUrl);
@@ -23,16 +20,9 @@ export async function get_all_questions(config: NetworkConfig): Promise<Question
       const address =
         typeof idRaw === "string" ? idRaw : ethers.hexlify(idRaw);
       const raw = raws[i];
-      const q = normalizeQuestion(raw, address);
-      if (!q) return null;
-      const arweaveIdBytes = raw
-        ? ethers.getBytes((raw as { arweave_id: string }).arweave_id)
-        : new Uint8Array(0);
-      const arweaveIdStr = decodeArweaveId(arweaveIdBytes);
-      if (arweaveIdStr) {
-        q.rules = (await fetchQuestionFromArweave(arweaveIdStr, config)).rules;
-      }
-      return q;
+      const base = normalizeQuestion(raw, address);
+      if (!base) return null;
+      return attachOffchainMetadata(raw, base, config);
     })
   );
   return list.filter((q): q is QuestionInfo => q != null);

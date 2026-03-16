@@ -6,7 +6,10 @@ import * as evm from "./evm";
 import {
   uploadQuestionToArweaveWithSol,
   uploadQuestionToArweaveWithEvm,
+  uploadExplanationToArweaveWithSol,
+  uploadExplanationToArweaveWithEvm,
 } from "./arweave/arweave";
+import { resolveAnswerIndex } from "./utils/outcomes";
 import type {
   ChainSigner,
   QuestionInfo,
@@ -56,7 +59,7 @@ export const EVM_BASE_SEPOLIA_CONFIG: NetworkConfig = {
   idlFileName: "",
   explorerCluster: "",
   explorerUrl: "https://sepolia.basescan.org",
-  contractAddress: "0x8521e82E1d2b43f257bB16e27D4aF93FD252ba7A",
+  contractAddress: "0x219DE4261878b5B0d4F37F489B2759748A9F1F5A",
 };
 
 export class OverheatSDK {
@@ -64,6 +67,20 @@ export class OverheatSDK {
 
   constructor(opts: { config: NetworkConfig }) {
     this.config = opts.config;
+  }
+
+  async loadWallet(walletPath: string): Promise<ChainSigner> {
+    switch (this.config.network) {
+      case "sol-devnet":
+      case "sol-staging":
+        const { solWallet } = sol.loadWallet(walletPath);
+        return { chain: "solana" as const, wallet: solWallet };
+      case "evm-base-sepolia":
+        const { privateKey } = evm.loadWallet(walletPath);
+        return { chain: "evm" as const, privateKeyHex: privateKey };
+      default:
+        throw new Error(`Unsupported network: ${this.config.network}`);
+    }
   }
 
   async getAllQuestions(): Promise<QuestionInfo[]> {
@@ -168,6 +185,12 @@ export class OverheatSDK {
     options: UpdateAnswerOptions
   ): Promise<string> {
     const { questionAddress, answer, explanation } = options;
+    // Resolve answer label to index using current on-chain outcomes.
+    const current = await this.getQuestionByAddress(questionAddress);
+    if (!current) {
+      throw new Error(`Question not found at address ${questionAddress}`);
+    }
+    const answerIndex = resolveAnswerIndex(answer, current.outcomes);
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging": {
@@ -177,10 +200,15 @@ export class OverheatSDK {
           );
         }
         const wallet = signer.wallet as AnchorWallet;
+        const uploadResult = await uploadExplanationToArweaveWithSol(
+          explanation,
+          wallet.payer,
+          this.config
+        );
         const r = await sol.update_answer(
           questionAddress,
-          answer,
-          explanation,
+          answerIndex,
+          uploadResult.transactionId,
           wallet,
           this.config
         );
@@ -192,11 +220,17 @@ export class OverheatSDK {
             `Network is ${this.config.network} but signer is ${signer.chain}. Use an EVM signer.`
           );
         }
+        const uploadResult = await uploadExplanationToArweaveWithEvm(
+          explanation,
+          signer.privateKeyHex,
+          this.config,
+          this.config.network
+        );
         const result = await evm.update_answer(
           signer.privateKeyHex,
           questionAddress,
-          answer,
-          explanation,
+          answerIndex,
+          uploadResult.transactionId,
           this.config
         );
         return result.txHash;

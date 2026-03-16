@@ -2,12 +2,8 @@ import * as anchor from "@coral-xyz/anchor";
 import { Connection } from "@solana/web3.js";
 import type { QuestionInfo, TimeRangeFilter } from "../types";
 import type { NetworkConfig } from "../config";
-import {
-  decodeBytesToString,
-  decodeArweaveId,
-  getIdl,
-} from "./types";
-import { fetchQuestionFromArweave } from "../arweave/arweave";
+import { decodeBytesToString, decodeArweaveId, getIdl } from "./types";
+import { buildQuestionInfoFromAccount } from "./utils";
 
 export async function get_questions_by_time_range(
   config: NetworkConfig,
@@ -48,30 +44,14 @@ export async function get_questions_by_time_range(
       }
     }
 
-    const arweaveId = decodeArweaveId(questionData.arweaveId);
-    let rules = "";
-    if (arweaveId && arweaveId.trim().length > 0) {
-      const arweaveData = await fetchQuestionFromArweave(arweaveId.trim(), config);
-      rules = arweaveData.rules;
-    }
-
+    const info = await buildQuestionInfoFromAccount(
+      account.publicKey,
+      questionData,
+      config
+    );
     questions.push({
-      address: account.publicKey.toString(),
-      authority: questionData.authority.toString(),
+      ...info,
       createdAt,
-      expectedExpirationTime: BigInt(questionData.expectedExpirationTime.toString()),
-      latestExpirationTime: BigInt(questionData.latestExpirationTime.toString()),
-      questionText: decodeBytesToString(questionData.questionText),
-      category: decodeBytesToString(questionData.category),
-      explanation: decodeBytesToString(questionData.explanation),
-      rules,
-      answer:
-        questionData.answer === null
-          ? null
-          : questionData.answer
-            ? "Yes"
-            : "No",
-      earlyResolutionThreshold: questionData.earlyResolutionThreshold ?? 0,
     });
   }
 

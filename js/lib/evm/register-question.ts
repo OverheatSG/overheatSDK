@@ -3,6 +3,7 @@ import type { NetworkConfig } from "../config";
 import { getContract, wrapContractError } from "./contract";
 import { createSigner } from "./wallet";
 import type { RegisterQuestionParams } from "../types";
+import { normalizeOutcomes } from "../utils/outcomes";
 
 export async function register_question(
   params: RegisterQuestionParams,
@@ -12,17 +13,19 @@ export async function register_question(
 ): Promise<{ questionId: string; txHash: string }> {
   const signer = createSigner(privateKey, config);
   const contract = getContract(config.contractAddress!, signer);
-  const arweaveIdHex = arweaveId.startsWith("0x")
+  const rulesArweaveIdHex = arweaveId.startsWith("0x")
     ? arweaveId
     : "0x" + Buffer.from(arweaveId, "utf8").toString("hex");
-  if (ethers.getBytes(arweaveIdHex).length !== 44) {
+  if (ethers.getBytes(rulesArweaveIdHex).length !== 44) {
     throw new Error(
       "arweaveId must be exactly 44 bytes (got " +
-        ethers.getBytes(arweaveIdHex).length +
+        ethers.getBytes(rulesArweaveIdHex).length +
         ")"
     );
   }
   const early = ethers.parseEther(params.earlyResolutionThreshold);
+
+  const normalizedOutcomes = normalizeOutcomes(params.outcomes).join("|");
 
   let tx;
   try {
@@ -31,7 +34,8 @@ export async function register_question(
       BigInt(params.expectedExpirationTime),
       BigInt(params.latestExpirationTime),
       params.category,
-      arweaveIdHex,
+      normalizedOutcomes,
+      rulesArweaveIdHex,
       early
     );
   } catch (err) {
@@ -45,6 +49,10 @@ export async function register_question(
         receipt.hash
     );
   }
+
+  // wait for 10 blocks
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
   const count = await contract.getQuestionCount();
   if (count === 0n) {
     throw new Error(

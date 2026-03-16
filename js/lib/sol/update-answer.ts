@@ -1,12 +1,12 @@
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import { getIdl } from "./types";
+import { getIdl, encodeArweaveId } from "./types";
 import type { NetworkConfig } from "../config";
 
 export async function update_answer(
   questionId: string,
-  answer: boolean,
-  explanation: string,
+  answerIndex: number,
+  explanationArweaveId: string,
   wallet: anchor.Wallet,
   config: NetworkConfig
 ): Promise<{ transaction: string }> {
@@ -24,8 +24,10 @@ export async function update_answer(
   const program = new anchor.Program(idl as anchor.Idl, provider);
   const questionPubkey = new PublicKey(questionId);
 
+  const explanationIdForAnchor = encodeArweaveId(explanationArweaveId.trim());
+
   const tx = await program.methods
-    .updateAnswer(answer, explanation)
+    .updateAnswer(new anchor.BN(answerIndex), Array.from(explanationIdForAnchor))
     .accounts({
       question: questionPubkey,
       authority: wallet.publicKey,

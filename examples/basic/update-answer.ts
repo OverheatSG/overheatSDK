@@ -1,17 +1,17 @@
-import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG,SOL_STAGING_CONFIG,SOL_DEVNET_CONFIG, evm } from "overheat-sdk";
+import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG,SOL_STAGING_CONFIG,SOL_DEVNET_CONFIG } from "overheat-sdk";
 
 // Example constants
-const WALLET_PATH = "./example-evm-key.key";
-const QUESTION_ADDRESS = "0xd74fbf2b908d4dafcbac336f8d1f603e021d606d8b5dfbd779b799e6399d16a6";
-const ANSWER = true;
+const ENV =SOL_DEVNET_CONFIG
+const WALLET_PATH = "./example-sol-key.key";
+const QUESTION_ADDRESS = "9kfiYg6HKSPwqcHGJtdWD7ymdqQSunJGmcPYMcweFmCM";
+const ANSWER = "No"; // must match one of the outcomes; empty string clears the answer
 const EXPLANATION = "According to reputable data sources, the condition was met.";
 
 async function main(): Promise<void> {
 
     // config: EVM_BASE_SEPOLIA_CONFIG, SOL_STAGING_CONFIG, SOL_DEVNET_CONFIG
-  const sdk = new OverheatSDK({ config: EVM_BASE_SEPOLIA_CONFIG });
-  const { privateKey } = evm.loadWallet(WALLET_PATH);
-  const signer = { chain: "evm" as const, privateKeyHex: privateKey };
+  const sdk = new OverheatSDK({ config: ENV });
+  const signer = await sdk.loadWallet(WALLET_PATH);
 
   const txHash = await sdk.updateAnswer(signer, {
     questionAddress: QUESTION_ADDRESS,

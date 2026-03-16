@@ -16,9 +16,12 @@ export interface QuestionInfo {
   latestExpirationTime: bigint;
   questionText: string;
   category: string;
+  /** Human-readable explanation text (if available). Currently not populated by the new contracts, kept for backwards compatibility. */
   explanation: string;
+  /** Outcome labels for the question (decoded from '|' separated string). */
+  outcomes: string[];
   rules: string;
-  answer: string | null;
+  aggregatedAnswer: string | null;
   earlyResolutionThreshold: number;
 }
 
@@ -30,6 +33,8 @@ export interface TimeRangeFilter {
 export interface RegisterQuestionParams {
   questionText: string;
   rules: string;
+  /** Outcome labels, up to 30 entries; SDK will trim to 30 and encode as '|' separated string on-chain. */
+  outcomes: string[];
   expectedExpirationTime: number;
   latestExpirationTime: number;
   category: string;
@@ -49,6 +54,11 @@ export interface RegisterQuestionResult {
 
 export interface UpdateAnswerOptions {
   questionAddress: string;
-  answer: boolean;
+  /**
+   * Human-readable answer label; must match one of the outcomes,
+   * or empty string to clear/unanswer.
+   */
+  answer: string;
+  /** Human-readable explanation text; will be uploaded to Arweave and only the ID is stored on-chain. */
   explanation: string;
 }
