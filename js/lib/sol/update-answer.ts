@@ -5,7 +5,7 @@ import type { NetworkConfig } from "../config";
 
 export async function update_answer(
   questionId: string,
-  answerIndex: number,
+  answers: (boolean | null)[],
   explanationArweaveId: string,
   wallet: anchor.Wallet,
   config: NetworkConfig
@@ -27,7 +27,7 @@ export async function update_answer(
   const explanationIdForAnchor = encodeArweaveId(explanationArweaveId.trim());
 
   const tx = await program.methods
-    .updateAnswer(new anchor.BN(answerIndex), explanationIdForAnchor)
+    .updateAnswer(answers, explanationIdForAnchor)
     .accounts({
       question: questionPubkey,
       authority: wallet.publicKey,

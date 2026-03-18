@@ -1,5 +1,5 @@
 {
-  "address": "68vkLjWzRCbs5eDuPn8bhj7fcucwp93L6yfRSs3hMVjc",
+  "address": "2Lt9NAxDZscTTkxTSMP62dAQvrGZ7cXonagJypYHeHpR",
   "metadata": {
     "name": "overheat",
     "version": "0.1.0",
@@ -71,7 +71,7 @@
     {
       "name": "update_answer",
       "docs": [
-        "Update the answer for a question (answer is index into outcomes, 0-based; -1 means unanswered)"
+        "Update the answer for a question (per-outcome Option<bool> for each outcome)"
       ],
       "discriminator": [
         172,
@@ -95,8 +95,12 @@
       ],
       "args": [
         {
-          "name": "answer",
-          "type": "i64"
+          "name": "answers",
+          "type": {
+            "vec": {
+              "option": "bool"
+            }
+          }
         },
         {
           "name": "explanation_arweave_id",
@@ -158,11 +162,19 @@
             "type": "i64"
           },
           {
-            "name": "answer",
+            "name": "answers",
             "docs": [
-              "Answer index into outcomes (0-based). -1 means unanswered."
+              "Per-outcome answers: None / Some(true) / Some(false).",
+              "Length = MAX_OUTCOMES, aligned with logical outcomes count."
             ],
-            "type": "i64"
+            "type": {
+              "array": [
+                {
+                  "option": "bool"
+                },
+                32
+              ]
+            }
           },
           {
             "name": "outcomes",

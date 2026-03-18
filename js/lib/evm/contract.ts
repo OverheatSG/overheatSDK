@@ -1,5 +1,6 @@
 import { Contract, Interface, ethers, type Provider, type Signer } from "ethers";
 import type { QuestionInfo } from "../types";
+import { MAX_OUTCOMES } from "../utils/outcomes";
 
 import OverheatAbi from "./abi.json";
 
@@ -25,7 +26,7 @@ interface RawQuestion {
   created_at: bigint;
   expected_expiration_time: bigint;
   latest_expiration_time: bigint;
-  answer: bigint;
+  answers: readonly bigint[];
   outcomes: string;
   question_text: string;
   category: string;
@@ -69,13 +70,21 @@ export function normalizeQuestion(
     return null;
   }
   const outcomesStr = raw.outcomes ?? "";
-  const outcomesArray = outcomesStr ? outcomesStr.split("|").slice(0, 30) : [];
-  const answerIndexRaw = Number(raw.answer ?? -1n);
-  const answerIndex = answerIndexRaw >= 0 ? answerIndexRaw : null;
-  const aggregatedAnswer =
-    answerIndex != null && answerIndex >= 0 && answerIndex < outcomesArray.length
-      ? outcomesArray[answerIndex]
-      : null;
+  const outcomesArray = outcomesStr
+    ? outcomesStr.split("|").slice(0, MAX_OUTCOMES)
+    : [];
+  const rawAnswers = Array.isArray(raw.answers) ? raw.answers : [];
+  const answers: (boolean | null)[] = [];
+  for (let i = 0; i < outcomesArray.length && i < rawAnswers.length; i++) {
+    const v = Number(rawAnswers[i] ?? -1n);
+    if (v === 1) {
+      answers.push(true);
+    } else if (v === 0) {
+      answers.push(false);
+    } else {
+      answers.push(null);
+    }
+  }
   const earlyStr =
     raw.early_resolution_threshold != null
       ? ethers.formatEther(raw.early_resolution_threshold)
@@ -91,7 +100,7 @@ export function normalizeQuestion(
     explanation: "",
     outcomes: outcomesArray,
     rules: "",
-    aggregatedAnswer,
+    answers,
     earlyResolutionThreshold: parseFloat(earlyStr) || 0,
   };
 }

@@ -8,7 +8,7 @@ const EXPECTED_EXPIRATION_TIME = Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 6
 const LATEST_EXPIRATION_TIME = EXPECTED_EXPIRATION_TIME + 24 * 60 * 60;
 const CATEGORY = "Crypto";
 const RULES = "Resolution according to CoinGecko BTC/USD daily close.";
-const EARLY_RESOLUTION_THRESHOLD = "0.75";
+const EARLY_RESOLUTION_THRESHOLD = 0.75;
 const OUTCOMES = [
   "Yes",
   "No",

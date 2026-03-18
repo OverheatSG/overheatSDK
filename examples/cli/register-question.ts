@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG } from "overheat-sdk";
+import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG, MAX_OUTCOMES } from "overheat-sdk";
 
 const sdk = new OverheatSDK({ config: EVM_BASE_SEPOLIA_CONFIG });
 
-if (require.main === module) {
+async function main() {
   const args = process.argv.slice(2);
   if (args.length < 7) {
     console.error(
@@ -18,7 +18,7 @@ if (require.main === module) {
       "  early_resolution_threshold: Number as string (e.g. 0.75)"
     );
     console.error(
-      '  outcomes_json: JSON array of up to 30 outcome strings, e.g. ["Yes","No","Tie",...].'
+      `  outcomes_json: JSON array of up to ${MAX_OUTCOMES} outcome strings, e.g. ["Yes","No","Tie",...].`
     );
     console.error(
       "  credential_path: Optional. Overridden by env SOLANA_KEYPAIR_PATH or EVM_KEY_PATH."
@@ -54,7 +54,11 @@ if (require.main === module) {
   }
 
   const earlyResolutionThreshold = parseFloat(earlyResolutionThresholdRaw);
-  if (Number.isNaN(earlyResolutionThreshold)) {
+  if (
+    Number.isNaN(earlyResolutionThreshold) ||
+    earlyResolutionThreshold < 0 ||
+    earlyResolutionThreshold > 1
+  ) {
     console.error("Error: early_resolution_threshold must be a valid number");
     process.exit(1);
   }
@@ -65,7 +69,7 @@ if (require.main === module) {
     if (!Array.isArray(parsed)) {
       throw new Error("outcomes_json must be a JSON array");
     }
-    outcomes = parsed.map((v) => String(v)).slice(0, 30);
+    outcomes = parsed.map((v) => String(v)).slice(0, MAX_OUTCOMES);
   } catch (e) {
     console.error("Error: outcomes_json must be a valid JSON array of strings");
     process.exit(1);
@@ -80,7 +84,7 @@ if (require.main === module) {
       latestExpirationTime,
       category,
       rules,
-      earlyResolutionThreshold: earlyResolutionThresholdRaw,
+      earlyResolutionThreshold,
       outcomes,
     })
     .then((result) => {
@@ -100,4 +104,11 @@ if (require.main === module) {
       }
       process.exit(1);
     });
+}
+
+if (require.main === module) {
+  main().catch((error) => {
+    console.error("Error:", error);
+    process.exit(1);
+  });
 }

@@ -23,7 +23,7 @@ export async function register_question(
         ")"
     );
   }
-  const early = ethers.parseEther(params.earlyResolutionThreshold);
+  const early = ethers.parseEther(params.earlyResolutionThreshold.toString());
 
   const normalizedOutcomes = normalizeOutcomes(params.outcomes).join("|");
 

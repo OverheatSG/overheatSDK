@@ -21,7 +21,8 @@ export interface QuestionInfo {
   /** Outcome labels for the question (decoded from '|' separated string). */
   outcomes: string[];
   rules: string;
-  aggregatedAnswer: string | null;
+  /** Per-outcome answers: null / false / true, length = outcomes.length (up to MAX_OUTCOMES). */
+  answers: (boolean | null)[];
   earlyResolutionThreshold: number;
 }
 
@@ -33,18 +34,18 @@ export interface TimeRangeFilter {
 export interface RegisterQuestionParams {
   questionText: string;
   rules: string;
-  /** Outcome labels, up to 30 entries; SDK will trim to 30 and encode as '|' separated string on-chain. */
+  /** Outcome labels, up to 32 entries; SDK will trim to 32 and encode as '|' separated string on-chain. */
   outcomes: string[];
   expectedExpirationTime: number;
   latestExpirationTime: number;
   category: string;
   /**
-   * Early resolution threshold (chain-specific representation).
+   * Early resolution threshold, as a floating-point fraction (e.g. 0.5).
    *
-   * On Solana this is interpreted as a floating-point fraction (e.g. "0.5").
-   * On EVM this is parsed via ethers.parseEther for fixed-point precision.
+   * On Solana this is passed directly as f64.
+   * On EVM this is converted via ethers.parseEther for fixed-point precision.
    */
-  earlyResolutionThreshold: string;
+  earlyResolutionThreshold: number;
 }
 
 export interface RegisterQuestionResult {
@@ -55,10 +56,10 @@ export interface RegisterQuestionResult {
 export interface UpdateAnswerOptions {
   questionAddress: string;
   /**
-   * Human-readable answer label; must match one of the outcomes,
-   * or empty string to clear/unanswer.
+   * Per-outcome resolution (same semantics as {@link QuestionInfo.answers}).
+   * Pass only the slots you need (length ≤ MAX_OUTCOMES); SDK pads with null to full on-chain length.
    */
-  answer: string;
+  answers: (boolean | null)[];
   /** Human-readable explanation text; will be uploaded to Arweave and only the ID is stored on-chain. */
   explanation: string;
 }

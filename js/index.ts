@@ -15,6 +15,8 @@ export type {
 
 export type { NetworkConfig } from "./lib/config";
 
+export { MAX_OUTCOMES } from "./lib/utils/outcomes";
+
 export * from "./lib/sol";
 export * from "./lib/arweave/arweave";
 export * as evm from "./lib/evm";

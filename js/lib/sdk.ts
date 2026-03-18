@@ -9,7 +9,7 @@ import {
   uploadExplanationToArweaveWithSol,
   uploadExplanationToArweaveWithEvm,
 } from "./arweave/arweave";
-import { resolveAnswerIndex } from "./utils/outcomes";
+import { padAnswersToMaxOutcomes } from "./utils/outcomes";
 import type {
   ChainSigner,
   QuestionInfo,
@@ -59,7 +59,7 @@ export const EVM_BASE_SEPOLIA_CONFIG: NetworkConfig = {
   idlFileName: "",
   explorerCluster: "",
   explorerUrl: "https://sepolia.basescan.org",
-  contractAddress: "0x219DE4261878b5B0d4F37F489B2759748A9F1F5A",
+  contractAddress: "0x102b3d929227f43Ee3f6b3B10Ab5Dda5306A1a2c",
 };
 
 export class OverheatSDK {
@@ -130,6 +130,16 @@ export class OverheatSDK {
     signer: ChainSigner,
     params: RegisterQuestionParams
   ): Promise<RegisterQuestionResult> {
+    // Validate earlyResolutionThreshold is between 0 and 1.
+    if (
+      params.earlyResolutionThreshold < 0 ||
+      params.earlyResolutionThreshold > 1
+    ) {
+      throw new Error(
+        `earlyResolutionThreshold must be between 0 and 1 (got ${params.earlyResolutionThreshold}).`
+      );
+    }
+
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging": {
@@ -184,13 +194,8 @@ export class OverheatSDK {
     signer: ChainSigner,
     options: UpdateAnswerOptions
   ): Promise<string> {
-    const { questionAddress, answer, explanation } = options;
-    // Resolve answer label to index using current on-chain outcomes.
-    const current = await this.getQuestionByAddress(questionAddress);
-    if (!current) {
-      throw new Error(`Question not found at address ${questionAddress}`);
-    }
-    const answerIndex = resolveAnswerIndex(answer, current.outcomes);
+    const { questionAddress, answers, explanation } = options;
+    const chainAnswers = padAnswersToMaxOutcomes(answers);
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging": {
@@ -207,7 +212,7 @@ export class OverheatSDK {
         );
         const r = await sol.update_answer(
           questionAddress,
-          answerIndex,
+          chainAnswers,
           uploadResult.transactionId,
           wallet,
           this.config
@@ -229,7 +234,7 @@ export class OverheatSDK {
         const result = await evm.update_answer(
           signer.privateKeyHex,
           questionAddress,
-          answerIndex,
+          chainAnswers,
           uploadResult.transactionId,
           this.config
         );

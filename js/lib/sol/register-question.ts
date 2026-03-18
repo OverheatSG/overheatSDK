@@ -24,7 +24,7 @@ export async function register_question(
 
   const program = new anchor.Program(idl as anchor.Idl, provider) as anchor.Program;
   const rulesArweaveIdForAnchor = encodeArweaveId(arweaveId.trim());
-  const earlyThreshold = parseFloat(params.earlyResolutionThreshold) || 0;
+  const earlyThreshold = params.earlyResolutionThreshold ?? 0;
 
   const normalizedOutcomes = normalizeOutcomes(params.outcomes).join("|");
 

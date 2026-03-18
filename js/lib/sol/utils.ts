@@ -1,6 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 import type { NetworkConfig } from "../config";
 import type { QuestionInfo } from "../types";
+import { MAX_OUTCOMES } from "../utils/outcomes";
 import { decodeBytesToString, decodeArweaveId } from "./types";
 import {
   fetchQuestionFromArweave,
@@ -39,20 +40,28 @@ export async function buildQuestionInfoFromAccount(
 
   const outcomesStr = decodeBytesToString(accountData.outcomes);
   const outcomes: string[] = outcomesStr
-    ? outcomesStr.split("|").slice(0, 30)
+    ? outcomesStr.split("|").slice(0, MAX_OUTCOMES)
     : [];
 
-  const answerIndexRaw =
-    accountData.answer != null
-      ? Number(BigInt(accountData.answer.toString()))
-      : -1;
-  const answerIndex = answerIndexRaw >= 0 ? answerIndexRaw : null;
-  const aggregatedAnswer =
-    answerIndex != null &&
-    answerIndex >= 0 &&
-    answerIndex < outcomes.length
-      ? outcomes[answerIndex]
-      : null;
+  // answers: Array<Option<bool>> with fixed length (MAX_OUTCOMES).
+  const rawAnswers: unknown[] = Array.isArray(accountData.answers)
+    ? accountData.answers
+    : [];
+  const answers: (boolean | null)[] = [];
+  for (let i = 0; i < outcomes.length && i < rawAnswers.length; i++) {
+    const v = rawAnswers[i];
+    const isTrue =
+      typeof v === "boolean"
+        ? v
+        : v && typeof v === "object" && "some" in (v as any)
+        ? Boolean((v as any).some)
+        : false;
+    const isSome =
+      v != null &&
+      (typeof v === "boolean" ||
+        (typeof v === "object" && "some" in (v as any)));
+    answers.push(isSome ? (isTrue ? true : false) : null);
+  }
 
   return {
     address: pubkey.toString(),
@@ -67,7 +76,7 @@ export async function buildQuestionInfoFromAccount(
     explanation,
     outcomes,
     rules,
-    aggregatedAnswer,
+    answers,
     earlyResolutionThreshold: accountData.earlyResolutionThreshold ?? 0,
   };
 }
