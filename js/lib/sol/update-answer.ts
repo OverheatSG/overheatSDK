@@ -27,7 +27,7 @@ export async function update_answer(
   const explanationIdForAnchor = encodeArweaveId(explanationArweaveId.trim());
 
   const tx = await program.methods
-    .updateAnswer(new anchor.BN(answerIndex), Array.from(explanationIdForAnchor))
+    .updateAnswer(new anchor.BN(answerIndex), explanationIdForAnchor)
     .accounts({
       question: questionPubkey,
       authority: wallet.publicKey,

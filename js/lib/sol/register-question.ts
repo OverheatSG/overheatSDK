@@ -51,7 +51,7 @@ export async function register_question(
       new anchor.BN(params.latestExpirationTime),
       params.category,
       normalizedOutcomes,
-      Array.from(rulesArweaveIdForAnchor),
+      rulesArweaveIdForAnchor,
       earlyThreshold
     )
     .accounts({
