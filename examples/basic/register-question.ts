@@ -19,7 +19,7 @@ async function main(): Promise<void> {
 
     // config: EVM_BASE_SEPOLIA_CONFIG, SOL_STAGING_CONFIG, SOL_DEVNET_CONFIG
   const sdk = new OverheatSDK({ config: ENV });
-  const signer = await sdk.loadWallet(WALLET_PATH);
+  const signer = await sdk.loadWallet(WALLET_PATH); // or await sdk.loadWalletFromEnvValue(process.env.WALLET_PRIVATE_KEY);
 
   const result = await sdk.registerQuestion(signer, {
     questionText: QUESTION_TEXT,
