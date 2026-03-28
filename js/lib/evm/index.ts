@@ -1,6 +1,7 @@
 export { ABI, getContract, normalizeQuestion, parseContractError, toBytes32Hex, wrapContractError } from "./contract";
 export {
   loadWallet,
+  loadWalletFromEnvValue,
   generateWallet,
   saveWallet,
 } from "./wallet";

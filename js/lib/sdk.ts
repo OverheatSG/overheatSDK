@@ -83,6 +83,20 @@ export class OverheatSDK {
     }
   }
 
+  async loadWalletFromEnvValue(envValue: string): Promise<ChainSigner> {
+    switch (this.config.network) {
+      case "sol-devnet":
+      case "sol-staging":
+        const { solWallet } = sol.loadWalletFromEnvValue(envValue);
+        return { chain: "solana" as const, wallet: solWallet };
+      case "evm-base-sepolia":
+        const { privateKey } = evm.loadWalletFromEnvValue(envValue);
+        return { chain: "evm" as const, privateKeyHex: privateKey };
+      default:
+        throw new Error(`Unsupported network: ${this.config.network}`);
+    }
+  }
+
   async getAllQuestions(): Promise<QuestionInfo[]> {
     switch (this.config.network) {
       case "sol-devnet":
