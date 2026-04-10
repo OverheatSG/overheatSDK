@@ -26,6 +26,9 @@ From `overheat-sdk`:
   - `UpdateAnswerOptions`
   - `TimeRangeFilter`
   - `NetworkConfig`
+  - `QuestionInterpretationRequest`, `QuestionInterpretationItem`, `QuestionInterpretationOptions`
+- **HTTP helper**
+  - `question_interpretation` — POST `/question_interpretation` on the Overheat API host
 - **Low‑level modules**
   - `sol` namespace (from `js/lib/sol`)
   - `evm` namespace (from `js/lib/evm`)
@@ -64,6 +67,11 @@ class OverheatSDK {
     signer: ChainSigner,
     options: UpdateAnswerOptions,
   ): Promise<string>; // returns tx hash
+
+  questionInterpretation(
+    payload: QuestionInterpretationRequest,
+    options?: QuestionInterpretationOptions,
+  ): Promise<QuestionInterpretationItem[]>;
 }
 ```
 
@@ -167,6 +175,36 @@ async function main() {
 
 void main();
 ```
+
+## Question interpretation (HTTP API)
+
+This calls the hosted Overheat gateway (`https://api.overheat.app` by default). Request fields use the **same snake_case names as the HTTP API** (`resolve_rules`, `expected_expiration_time`, `latest_expiration_time`, etc.). The response is a JSON array of `{ ambiguity, interpretations }`; the SDK returns that as `QuestionInterpretationItem[]`.
+
+Server-side or API-key access: pass `apiSecret: { secretId, secretKey }` so the client sends `Authorization: Bearer <secretId>:<secretKey>` (the gateway’s combined auth also accepts a Privy token in the same header or as a `privy-token` header or cookie, but the SDK only wires the secret pair helper today).
+
+```ts
+import {
+  question_interpretation,
+  type QuestionInterpretationRequest,
+} from "overheat-sdk";
+
+const payload: QuestionInterpretationRequest = {
+  question: "Will BTC trade above $100k by 2030-02-01?",
+  outcomes: ["Yes", "No"],
+  resolve_rules: "Resolution according to CoinGecko BTC/USD daily close.",
+  expected_expiration_time: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+  latest_expiration_time: Math.floor(Date.now() / 1000) + 8 * 24 * 60 * 60,
+};
+
+const items = await question_interpretation(payload, {
+  apiSecret: { secretId: process.env.OVERHEAT_API_SECRET_ID!, secretKey: process.env.OVERHEAT_API_SECRET_KEY! },
+  // host: "https://api.overheat.app", // optional override
+});
+
+console.log(items);
+```
+
+With `OverheatSDK`, the same payload and options are passed to `sdk.questionInterpretation(payload, options)`.
 
 ## Types (summary)
 

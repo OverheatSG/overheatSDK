@@ -4,6 +4,12 @@ import type { NetworkConfig } from "./config";
 import * as sol from "./sol";
 import * as evm from "./evm";
 import {
+  question_interpretation,
+  type QuestionInterpretationItem,
+  type QuestionInterpretationOptions,
+  type QuestionInterpretationRequest,
+} from "./api";
+import {
   uploadQuestionToArweaveWithSol,
   uploadQuestionToArweaveWithEvm,
   uploadExplanationToArweaveWithSol,
@@ -27,6 +33,11 @@ export type {
   TimeRangeFilter,
   UpdateAnswerOptions,
 } from "./types";
+export type {
+  QuestionInterpretationItem,
+  QuestionInterpretationOptions,
+  QuestionInterpretationRequest,
+} from "./api";
 
 export const SOL_DEVNET_CONFIG: NetworkConfig = {
   network: "sol-devnet",
@@ -257,5 +268,12 @@ export class OverheatSDK {
       default:
         throw new Error(`Unsupported network: ${this.config.network}`);
     }
+  }
+
+  async questionInterpretation(
+    payload: QuestionInterpretationRequest,
+    options?: QuestionInterpretationOptions
+  ): Promise<QuestionInterpretationItem[]> {
+    return question_interpretation(payload, options);
   }
 }

@@ -9,6 +9,7 @@
     "example:basic:get-by-time": "ts-node examples/basic/get-questions-by-created-time.ts",
     "example:basic:register": "ts-node examples/basic/register-question.ts",
     "example:basic:update-answer": "ts-node examples/basic/update-answer.ts",
+    "example:basic:question-interpretation": "ts-node examples/basic/question-interpretation.ts",
     "example:basic:wallet-sol": "ts-node examples/basic/wallet-example-sol.ts",
     "example:basic:wallet-evm": "ts-node examples/basic/wallet-example-evm.ts",
     "example:cli:get-all": "ts-node examples/cli/get-all-questions.ts",
@@ -20,10 +21,11 @@
     "example:cli:wallet-evm": "ts-node examples/cli/wallet-example-evm.ts"
   },
   "dependencies": {
-    "overheat-sdk": "0.2.7"
+    "overheat-sdk": "^0.2.8"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "dotenv": "^16.4.5",
     "ts-node": "^10.9.0",
     "typescript": "^5.0.0"
   }

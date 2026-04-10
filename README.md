@@ -9,6 +9,7 @@ The Overheat SDK provides a complete interface for interacting with the Overheat
 - **Question Registration**: Register new questions on-chain with rules stored on Arweave
 - **Answer Updates**: Update question answers with explanations
 - **Data Retrieval**: Query questions by address, time range, or get all questions
+- **Question interpretation**: Call the Overheat HTTP API to analyze ambiguity in a market spec (requires gateway credentials)
 - **Multi-network Support**: Works with Solana devnet/staging and EVM Base Sepolia
 - **Wallet Utilities**: Simple helpers to generate, load, and save wallets
 
@@ -76,6 +77,7 @@ overheatSDK/
 │   │   ├── get-questions-by-created-time.ts
 │   │   ├── register-question.ts
 │   │   ├── update-answer.ts
+│   │   ├── question-interpretation.ts
 │   │   ├── wallet-example-sol.ts
 │   │   └── wallet-example-evm.ts
 │   └── cli/                 # CLI-oriented scripts using process.argv
@@ -87,6 +89,7 @@ overheatSDK/
 │       ├── wallet-example-sol.ts
 │       └── wallet-example-evm.ts
 ├── package.json             # Root package.json for running examples
+├── .env.example             # Template for example env vars (copy to `.env`)
 └── README.md                # This file
 ```
 
@@ -100,9 +103,16 @@ The example scripts demonstrate how to use the SDK in two styles:
 ### Setup
 
 ```bash
-# Install dependencies (including overheat-sdk)
+# Install dependencies (the examples depend on the published npm package `overheat-sdk`)
 npm install
 ```
+
+For `question-interpretation`, create a `.env` file in the repo root (see `.env.example`) with your gateway API credentials:
+
+- `OVERHEAT_API_SECRET_ID`
+- `OVERHEAT_API_SECRET_KEY`
+
+The gateway expects `Authorization: Bearer <secretId>:<secretKey>`. The example loads these via `dotenv`.
 
 ### Basic examples
 
@@ -112,6 +122,7 @@ Run them directly with `ts-node` (or your own build tooling):
 npx ts-node examples/basic/get-all-questions.ts
 npx ts-node examples/basic/register-question.ts
 npx ts-node examples/basic/update-answer.ts
+npm run example:basic:question-interpretation
 ```
 
 These scripts hard-code the network, question content, and times, so they are easier to read and copy into your own code.
