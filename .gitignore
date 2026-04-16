@@ -1,5 +1,7 @@
-# Project-specific
+# Project-specific (wallets / private keys — never commit)
 example-wallet.json
+*.key
+*.pem
 
 # Logs
 logs
@@ -145,3 +147,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~

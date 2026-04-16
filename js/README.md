@@ -1,6 +1,6 @@
-# overheat-sdk
+# overheat-sdk (JS package)
 
-TypeScript SDK for interacting with the Overheat Solana oracle program.
+TypeScript SDK for the Overheat oracle on **Solana** and **EVM**. This package exposes a class‑based, network‑aware API with no global state.
 
 ## Installation
 
@@ -8,383 +8,271 @@ TypeScript SDK for interacting with the Overheat Solana oracle program.
 npm install overheat-sdk
 ```
 
-## Quick Start
+## Core Exports
 
-```typescript
-import { getAllQuestions, setNetwork } from 'overheat-sdk';
+From `overheat-sdk`:
 
-// Set network (defaults to devnet)
-setNetwork('devnet');
+- **Class**
+  - `OverheatSDK`
+- **Built‑in network configs**
+  - `SOL_DEVNET_CONFIG`
+  - `SOL_STAGING_CONFIG`
+  - `EVM_BASE_SEPOLIA_CONFIG`
+- **Types**
+  - `ChainSigner`
+  - `QuestionInfo`
+  - `RegisterQuestionParams`
+  - `RegisterQuestionResult`
+  - `UpdateAnswerOptions`
+  - `TimeRangeFilter`
+  - `NetworkConfig`
+  - `QuestionInterpretationRequest`, `QuestionInterpretationItem`, `QuestionInterpretationOptions`
+- **HTTP helper**
+  - `question_interpretation` — POST `/question_interpretation` on the Overheat API host
+- **Low‑level modules**
+  - `sol` namespace (from `js/lib/sol`)
+  - `evm` namespace (from `js/lib/evm`)
+  - Arweave helpers (from `js/lib/arweave/arweave`)
 
-// Get all questions
-const questions = await getAllQuestions();
-console.log(`Found ${questions.length} questions`);
-```
+## `OverheatSDK` Overview
 
-## Environment Configuration
+```ts
+import type {
+  ChainSigner,
+  QuestionInfo,
+  RegisterQuestionParams,
+  RegisterQuestionResult,
+  TimeRangeFilter,
+  UpdateAnswerOptions,
+  NetworkConfig,
+} from "overheat-sdk";
 
-The SDK supports **devnet**, **staging**, and **mainnet** environments. By default, it uses **devnet**.
+class OverheatSDK {
+  readonly config: NetworkConfig;
 
-```typescript
-import { setNetwork } from 'overheat-sdk';
+  constructor(opts: { config: NetworkConfig });
 
-// Switch network
-setNetwork('mainnet'); // or 'devnet', 'staging'
+  getAllQuestions(): Promise<QuestionInfo[]>;
+  getQuestionByAddress(address: string): Promise<QuestionInfo | null>;
+  getQuestionsByTimeRange(opts?: {
+    timeRange?: TimeRangeFilter;
+  }): Promise<QuestionInfo[]>;
 
-// Or use environment variable
-process.env.OVERHEAT_NETWORK = 'mainnet';
-```
+  registerQuestion(
+    signer: ChainSigner,
+    params: RegisterQuestionParams,
+  ): Promise<RegisterQuestionResult>;
 
-## API Reference
+  updateAnswer(
+    signer: ChainSigner,
+    options: UpdateAnswerOptions,
+  ): Promise<string>; // returns tx hash
 
-### Configuration
-
-#### `setNetwork(network: 'devnet' | 'staging' | 'mainnet')`
-
-Set the active network environment.
-
-```typescript
-import { setNetwork } from 'overheat-sdk';
-setNetwork('mainnet');
-```
-
-#### `getNetwork(): 'devnet' | 'staging' | 'mainnet'`
-
-Get the current network.
-
-```typescript
-import { getNetwork } from 'overheat-sdk';
-const network = getNetwork();
-```
-
-#### `getConfig(): NetworkConfig`
-
-Get the current network configuration.
-
-```typescript
-import { getConfig } from 'overheat-sdk';
-const config = getConfig();
-console.log(config.rpcUrl);
-```
-
-### Question Operations
-
-#### `getAllQuestions(): Promise<QuestionInfo[]>`
-
-Get all registered questions from the current network.
-
-```typescript
-import { getAllQuestions } from 'overheat-sdk';
-
-const questions = await getAllQuestions();
-questions.forEach(q => {
-  console.log(q.address, q.questionText, q.answer);
-});
-```
-
-#### `getQuestionByAddress(address: string): Promise<QuestionInfo | null>`
-
-Get a specific question by its address.
-
-```typescript
-import { getQuestionByAddress } from 'overheat-sdk';
-
-const question = await getQuestionByAddress('3W7ST5htXbXZtDpTaYuNZQ1Fe3bU9reffTvV4NGqE7J7');
-if (question) {
-  console.log(question.questionText, question.answer);
+  questionInterpretation(
+    payload: QuestionInterpretationRequest,
+    options?: QuestionInterpretationOptions,
+  ): Promise<QuestionInterpretationItem[]>;
 }
 ```
 
-#### `getQuestionsByTimeRange(timeRange?: TimeRangeFilter): Promise<QuestionInfo[]>`
+### Networks
 
-Get questions filtered by creation time range. Uses the `created_at` field stored in the Question account for efficient filtering.
+Use one of the built‑in configs or your own `NetworkConfig`:
 
-```typescript
-import { getQuestionsByTimeRange } from 'overheat-sdk';
+- Solana:
+  - `SOL_DEVNET_CONFIG`
+  - `SOL_STAGING_CONFIG`
+- EVM:
+  - `EVM_BASE_SEPOLIA_CONFIG`
 
-// Get questions created between two timestamps
-const questions = await getQuestionsByTimeRange({
-  startTime: 1704067200, // Unix timestamp (seconds)
-  endTime: 1704153600
-});
+You can also construct a custom `NetworkConfig`:
 
-// Get all questions (no filter)
-const allQuestions = await getQuestionsByTimeRange();
-```
-
-#### `getQuestionsAfterTime(startTime: number): Promise<QuestionInfo[]>`
-
-Get questions created after a specific time.
-
-```typescript
-import { getQuestionsAfterTime } from 'overheat-sdk';
-
-const questions = await getQuestionsAfterTime(1704067200);
-```
-
-#### `getQuestionsBeforeTime(endTime: number): Promise<QuestionInfo[]>`
-
-Get questions created before a specific time.
-
-```typescript
-import { getQuestionsBeforeTime } from 'overheat-sdk';
-
-const questions = await getQuestionsBeforeTime(1704153600);
-```
-
-#### `registerQuestion(params, wallet, walletKeypair): Promise<RegisterQuestionResult>`
-
-Register a new question on the blockchain. The question rules are automatically uploaded to Arweave.
-
-```typescript
-import { registerQuestion, loadWallet } from 'overheat-sdk';
-import * as anchor from '@coral-xyz/anchor';
-
-const { wallet, keypair } = loadWallet('~/.config/solana/id.json');
-
-const result = await registerQuestion(
-  {
-    questionText: 'Will Bitcoin reach $100,000 by the end of 2025?',
-    expectedExpirationTime: 1735689600, // Unix timestamp (seconds)
-    latestExpirationTime: 1735776000,   // Unix timestamp (seconds)
-    category: 'Crypto',
-    rules: 'Price must be confirmed by at least 3 major cryptocurrency exchanges.'
-  },
-  wallet,
-  keypair
-);
-
-console.log('Question address:', result.questionAddress);
-console.log('Transaction:', result.transaction);
-console.log('Arweave ID:', result.arweaveId);
-```
-
-**Parameters:**
-- `params.questionText`: The question text (max 500 bytes)
-- `params.expectedExpirationTime`: Unix timestamp in seconds
-- `params.latestExpirationTime`: Unix timestamp in seconds
-- `params.category`: Category string (max 100 bytes)
-- `params.rules`: Rules description string (stored on Arweave)
-- `wallet`: Anchor wallet instance
-- `walletKeypair`: Solana keypair for signing transactions and Arweave upload payment
-
-#### `updateAnswer(questionAddress, answer, explanation, wallet): Promise<UpdateAnswerResult>`
-
-Update the answer and explanation for a question. Only the question authority can update the answer.
-
-```typescript
-import { updateAnswer, loadWallet } from 'overheat-sdk';
-
-const { wallet } = loadWallet('~/.config/solana/id.json');
-
-const result = await updateAnswer(
-  '3W7ST5htXbXZtDpTaYuNZQ1Fe3bU9reffTvV4NGqE7J7',
-  false, // true for Yes, false for No
-  'Additional information',
-  wallet
-);
-
-console.log('Transaction:', result.transaction);
-```
-
-**Parameters:**
-- `questionAddress`: The address of the question account
-- `answer`: `true` for Yes, `false` for No
-- `explanation`: Explanation string (max 200 bytes)
-- `wallet`: Anchor wallet instance (must be the question authority)
-
-### Display Utilities
-
-#### `printQuestionDetail(question: QuestionInfo): void`
-
-Print a single question in detailed format.
-
-```typescript
-import { getQuestionByAddress, printQuestionDetail } from 'overheat-sdk';
-
-const question = await getQuestionByAddress('...');
-if (question) {
-  printQuestionDetail(question);
+```ts
+interface NetworkConfig {
+  network: string;
+  rpcUrl: string;
+  wsUrl: string;
+  irysNode: string;
+  irysGateway: string;
+  idlFileName: string;
+  explorerCluster: string;
+  explorerUrl: string;
+  contractAddress?: string;
 }
 ```
 
-#### `printQuestionsList(questions: QuestionInfo[], header?: string): void`
+### Signers (`ChainSigner`)
 
-Print multiple questions in a list format.
-
-```typescript
-import { getAllQuestions, printQuestionsList } from 'overheat-sdk';
-
-const questions = await getAllQuestions();
-printQuestionsList(questions);
+```ts
+type ChainSigner =
+  | { chain: "solana"; wallet: AnchorWallet }
+  | { chain: "evm"; privateKeyHex: string };
 ```
 
-### Wallet Utilities
+- For **Solana**, pass an Anchor `Wallet`.
+- For **EVM**, pass a private key (hex); the SDK creates a signer internally.
 
-#### `loadWallet(walletPath: string): { wallet: anchor.Wallet, keypair: Keypair }`
+## Quick Start – EVM
 
-Load a Solana wallet from a file path.
-
-```typescript
-import { loadWallet } from 'overheat-sdk';
-
-const { wallet, keypair } = loadWallet('~/.config/solana/id.json');
-```
-
-### Arweave Integration
-
-#### `uploadQuestionToArweave(questionData, walletKeypair): Promise<ArweaveUploadResult>`
-
-Upload question data to Arweave using Irys Bundler.
-
-```typescript
-import { uploadQuestionToArweave } from 'overheat-sdk';
-import { Keypair } from '@solana/web3.js';
-
-const result = await uploadQuestionToArweave(
-  {
-    questionText: 'Will aliens visit Earth in 2026?',
-    rules: 'Must be confirmed by at least 3 major news outlets.'
-  },
-  walletKeypair
-);
-
-console.log('Arweave ID:', result.transactionId);
-```
-
-#### `fetchQuestionFromArweave(transactionId: string): Promise<QuestionDescription>`
-
-Fetch question data from Arweave.
-
-```typescript
-import { fetchQuestionFromArweave } from 'overheat-sdk';
-
-const data = await fetchQuestionFromArweave('7abE51MLDEmmH13RGALPghJBBqiqiJ5LJZvQrApPL3i5');
-console.log(data.questionText, data.rules);
-```
-
-## Types
-
-### `QuestionInfo`
-
-```typescript
-interface QuestionInfo {
-  address: string;                    // Public key address of the question account
-  authority: string;                   // Public key of the question's authority (creator)
-  createdAt: number;                   // Unix timestamp (seconds) when the question was created
-  expectedExpirationTime: number;      // Expected expiration time as Unix timestamp (seconds)
-  latestExpirationTime: number;        // Latest expiration time as Unix timestamp (seconds)
-  questionText: string;                // The question text
-  category: string;                    // Category string
-  explanation: string;                 // Explanation string (provided when answer is updated)
-  rules: string;                       // Rules description (fetched from Arweave)
-  answer: string | null;               // 'Yes', 'No', or null if not answered yet
-}
-```
-
-### `RegisterQuestionParams`
-
-```typescript
-interface RegisterQuestionParams {
-  questionText: string;
-  expectedExpirationTime: number;
-  latestExpirationTime: number;
-  category: string;
-  rules: string;
-}
-```
-
-### `RegisterQuestionResult`
-
-```typescript
-interface RegisterQuestionResult {
-  success: boolean;
-  questionAddress: string;
-  transaction: string;
-  arweaveId: string;
-}
-```
-
-### `UpdateAnswerResult`
-
-```typescript
-interface UpdateAnswerResult {
-  success: boolean;
-  transaction: string;
-}
-```
-
-### `TimeRangeFilter`
-
-```typescript
-interface TimeRangeFilter {
-  startTime?: number;  // Start time as Unix timestamp (seconds), inclusive
-  endTime?: number;    // End time as Unix timestamp (seconds), inclusive
-}
-```
-
-## Complete Example
-
-```typescript
+```ts
 import {
-  registerQuestion,
-  getAllQuestions,
-  getQuestionByAddress,
-  getQuestionsByTimeRange,
-  updateAnswer,
-  loadWallet,
-  setNetwork
-} from 'overheat-sdk';
+  OverheatSDK,
+  EVM_BASE_SEPOLIA_CONFIG,
+  evm,
+  type ChainSigner,
+  type RegisterQuestionParams,
+} from "overheat-sdk";
 
 async function main() {
-  // Set network
-  setNetwork('devnet');
+  const sdk = new OverheatSDK({ config: EVM_BASE_SEPOLIA_CONFIG });
 
-  // Load wallet
-  const { wallet, keypair } = loadWallet('~/.config/solana/id.json');
+  // Load private key from file
+  const { privateKey } = evm.loadWallet("./example-evm-key.key");
+  const signer: ChainSigner = { chain: "evm", privateKeyHex: privateKey };
 
-  // Register a question
-  const registerResult = await registerQuestion(
-    {
-      questionText: 'Will Bitcoin reach $100,000 by the end of 2025?',
-      expectedExpirationTime: 1735689600,
-      latestExpirationTime: 1735776000,
-      category: 'Crypto',
-      rules: 'Price must be confirmed by at least 3 major cryptocurrency exchanges.'
-    },
-    wallet,
-    keypair
-  );
-  console.log('Registered:', registerResult.questionAddress);
+  const params: RegisterQuestionParams = {
+    questionText: "Will BTC trade above $100k by 2030‑01‑01?",
+    rules: "Resolution according to CoinGecko BTC/USD daily close.",
+    expectedExpirationTime: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+    latestExpirationTime: Math.floor(Date.now() / 1000) + 8 * 24 * 60 * 60,
+    category: "Crypto",
+    earlyResolutionThreshold: "0.75",
+  };
 
-  // Get all questions
-  const questions = await getAllQuestions();
-  console.log('Total questions:', questions.length);
+  const result = await sdk.registerQuestion(signer, params);
+  console.log("Question address:", result.questionAddress);
+  console.log("Tx hash:", result.txHash);
+}
 
-  // Get specific question
-  const question = await getQuestionByAddress(registerResult.questionAddress);
-  if (question) {
-    console.log('Question:', question.questionText);
-  }
+void main();
+```
 
-  // Get questions by time range
-  const recentQuestions = await getQuestionsByTimeRange({
-    startTime: 1704067200
-  });
-  console.log('Recent questions:', recentQuestions.length);
+## Quick Start – Solana
 
-  // Update answer
-  await updateAnswer(
-    registerResult.questionAddress,
-    false,
-    'Additional information',
-    wallet
+```ts
+import {
+  OverheatSDK,
+  SOL_DEVNET_CONFIG,
+  loadWallet,
+  type ChainSigner,
+} from "overheat-sdk";
+
+async function main() {
+  const sdk = new OverheatSDK({ config: SOL_DEVNET_CONFIG });
+
+  const { solWallet } = loadWallet("./example-sol-key.key");
+  const signer: ChainSigner = { chain: "solana", wallet: solWallet };
+
+  const questions = await sdk.getAllQuestions();
+  console.log(
+    JSON.stringify(
+      questions,
+      (_, v) => (typeof v === "bigint" ? v.toString() : v),
+      2,
+    ),
   );
 }
 
-main().catch(console.error);
+void main();
 ```
 
-## License
+## Question interpretation (HTTP API)
 
-MIT
+This calls the hosted Overheat gateway (`https://api.overheat.app` by default). Request fields use the **same snake_case names as the HTTP API** (`resolve_rules`, `expected_expiration_time`, `latest_expiration_time`, etc.). The response is a JSON array of `{ ambiguity, interpretations }`; the SDK returns that as `QuestionInterpretationItem[]`.
+
+Server-side or API-key access: pass `apiSecret: { secretId, secretKey }` so the client sends `Authorization: Bearer <secretId>:<secretKey>` (the gateway’s combined auth also accepts a Privy token in the same header or as a `privy-token` header or cookie, but the SDK only wires the secret pair helper today).
+
+```ts
+import {
+  question_interpretation,
+  type QuestionInterpretationRequest,
+} from "overheat-sdk";
+
+const payload: QuestionInterpretationRequest = {
+  question: "Will BTC trade above $100k by 2030-02-01?",
+  outcomes: ["Yes", "No"],
+  resolve_rules: "Resolution according to CoinGecko BTC/USD daily close.",
+  expected_expiration_time: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+  latest_expiration_time: Math.floor(Date.now() / 1000) + 8 * 24 * 60 * 60,
+};
+
+const items = await question_interpretation(payload, {
+  apiSecret: { secretId: process.env.OVERHEAT_API_SECRET_ID!, secretKey: process.env.OVERHEAT_API_SECRET_KEY! },
+  // host: "https://api.overheat.app", // optional override
+});
+
+console.log(items);
+```
+
+With `OverheatSDK`, the same payload and options are passed to `sdk.questionInterpretation(payload, options)`.
+
+## Types (summary)
+
+All core types live in `js/lib/types.ts` and are re‑exported from `overheat-sdk`:
+
+- `QuestionInfo`
+- `RegisterQuestionParams`
+- `RegisterQuestionResult`
+- `UpdateAnswerOptions`
+- `TimeRangeFilter`
+
+They are already used in the method signatures of `OverheatSDK`.
+
+## Low‑level Modules
+
+If you need more control, you can use the low‑level sol/evm modules:
+
+```ts
+import { sol, evm } from "overheat-sdk"; // via index.ts exports
+// or
+import * as solMod from "overheat-sdk/lib/sol";
+import * as evmMod from "overheat-sdk/lib/evm";
+```
+
+Examples:
+
+- Solana:
+  - `sol.get_all_questions(config)`
+  - `sol.get_question_by_address(id, config)`
+  - `sol.register_question(params, wallet, arweaveId, config)`
+  - `sol.update_answer(id, answer, explanation, wallet, config)`
+- EVM:
+  - `evm.get_all_questions(config)`
+  - `evm.get_question_by_address(id, config)`
+  - `evm.register_question(params, arweaveId, privateKey, config)`
+  - `evm.update_answer(privateKey, id, answer, explanation, config)`
+
+## Wallet Helpers
+
+### Solana (`sol/wallet.ts`)
+
+- `loadWallet(path)` → `{ solWallet, solKeypair }`
+- `generateWallet()` → `{ solWallet, solKeypair }`
+- `saveWallet(wallet, path)` → void
+
+### EVM (`evm/wallet.ts`)
+
+- `evm.loadWallet(path)` → `{ privateKey }`
+- `evm.generateWallet()` → `{ privateKey }`
+- `evm.saveWallet(privateKey, path)` → void
+- `evm.createSigner(privateKey, config)` → `Signer`
+
+## Arweave Helpers
+
+From `js/lib/arweave/arweave.ts`:
+
+- `uploadQuestionToArweaveWithSol(questionData, keypair, config)`
+- `uploadQuestionToArweaveWithEvm(questionData, privateKey, config, network)`
+- `fetchQuestionFromArweave(transactionId)`
+
+`OverheatSDK.registerQuestion` already uses these under the hood; you only need them for advanced use cases.
+
+## Examples
+
+See the root `examples/` folder:
+
+- `examples/basic/` – Small scripts with hard‑coded params.
+- `examples/cli/` – CLI tools using `process.argv`.
+
+They are the best reference for real‑world usage patterns of this SDK.
+

@@ -1,5 +1,5 @@
 {
-  "address": "AbgR5xo8ED2aZ2XBwrZD2ehQwNNZQJ2eXs3LyA9ieaKa",
+  "address": "12t4xZBAyxzn7pdHnHThqMbVzYvgDGVRdxWgD64qTSb1",
   "metadata": {
     "name": "overheat",
     "version": "0.1.0",
@@ -55,7 +55,11 @@
           "type": "string"
         },
         {
-          "name": "arweave_id",
+          "name": "outcomes",
+          "type": "string"
+        },
+        {
+          "name": "rules_arweave_id",
           "type": "bytes"
         },
         {
@@ -67,7 +71,7 @@
     {
       "name": "update_answer",
       "docs": [
-        "Update the answer for a question (yes/no)"
+        "Update the answer for a question (per-outcome Option<bool> for each outcome)"
       ],
       "discriminator": [
         172,
@@ -91,12 +95,16 @@
       ],
       "args": [
         {
-          "name": "answer",
-          "type": "bool"
+          "name": "answers",
+          "type": {
+            "vec": {
+              "option": "bool"
+            }
+          }
         },
         {
-          "name": "explanation",
-          "type": "string"
+          "name": "explanation_arweave_id",
+          "type": "bytes"
         }
       ]
     }
@@ -154,9 +162,31 @@
             "type": "i64"
           },
           {
-            "name": "answer",
+            "name": "answers",
+            "docs": [
+              "Per-outcome answers: None / Some(true) / Some(false).",
+              "Length = MAX_OUTCOMES, aligned with logical outcomes count."
+            ],
             "type": {
-              "option": "bool"
+              "array": [
+                {
+                  "option": "bool"
+                },
+                32
+              ]
+            }
+          },
+          {
+            "name": "outcomes",
+            "docs": [
+              "All outcomes encoded into a single string buffer, '|' separated.",
+              "Max total length OUTCOMES_LENGTH (500 bytes)."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                500
+              ]
             }
           },
           {
@@ -164,7 +194,7 @@
             "type": {
               "array": [
                 "u8",
-                500
+                300
               ]
             }
           },
@@ -178,16 +208,16 @@
             }
           },
           {
-            "name": "explanation",
+            "name": "explanation_arweave_id",
             "type": {
               "array": [
                 "u8",
-                200
+                44
               ]
             }
           },
           {
-            "name": "arweave_id",
+            "name": "rules_arweave_id",
             "type": {
               "array": [
                 "u8",
