@@ -41,8 +41,8 @@ export type {
 
 export const SOL_DEVNET_CONFIG: NetworkConfig = {
   network: "sol-devnet",
-  rpcUrl: "https://api.zan.top/node/v1/solana/devnet/85f8917431284c59abfeaeb2e32a0d87",
-  wsUrl: "wss://api.zan.top/node/ws/v1/solana/devnet/85f8917431284c59abfeaeb2e32a0d87",
+  rpcUrl: "https://solana-devnet.g.alchemy.com/v2/4DGAPPrkca96ewAz3iGRP",
+  wsUrl: "wss://solana-devnet.g.alchemy.com/v2/4DGAPPrkca96ewAz3iGRP",
   irysNode: "https://devnet.irys.xyz",
   irysGateway: "https://devnet.irys.xyz",
   idlFileName: "overheat-devnet.json",
@@ -52,8 +52,8 @@ export const SOL_DEVNET_CONFIG: NetworkConfig = {
 
 export const SOL_STAGING_CONFIG: NetworkConfig = {
   network: "sol-staging",
-  rpcUrl: "https://api.zan.top/node/v1/solana/devnet/85f8917431284c59abfeaeb2e32a0d87",
-  wsUrl: "wss://api.zan.top/node/ws/v1/solana/devnet/85f8917431284c59abfeaeb2e32a0d87",
+  rpcUrl: "https://solana-devnet.g.alchemy.com/v2/4DGAPPrkca96ewAz3iGRP",
+  wsUrl: "wss://solana-devnet.g.alchemy.com/v2/4DGAPPrkca96ewAz3iGRP",
   irysNode: "https://devnet.irys.xyz",
   irysGateway: "https://devnet.irys.xyz",
   idlFileName: "overheat-staging.json",
@@ -63,8 +63,8 @@ export const SOL_STAGING_CONFIG: NetworkConfig = {
 
 export const EVM_BASE_SEPOLIA_CONFIG: NetworkConfig = {
   network: "evm-base-sepolia",
-  rpcUrl: "https://sepolia.base.org",
-  wsUrl: "",
+  rpcUrl: "https://base-sepolia.g.alchemy.com/v2/4DGAPPrkca96ewAz3iGRP",
+  wsUrl: "wss://base-sepolia.g.alchemy.com/v2/4DGAPPrkca96ewAz3iGRP",
   irysNode: "https://devnet.irys.xyz",
   irysGateway: "https://devnet.irys.xyz",
   idlFileName: "",
