@@ -21,9 +21,18 @@ import {
   evm,
 } from "overheat-sdk";
 
-const sdk = new OverheatSDK({ config: EVM_BASE_SEPOLIA_CONFIG });
+const ENV = {
+  ...EVM_BASE_SEPOLIA_CONFIG,
+  rpcUrl: process.env.OVERHEAT_RPC_URL ?? "",
+  wsUrl: process.env.OVERHEAT_WS_URL ?? "",
+};
+
+const sdk = new OverheatSDK({ config: ENV });
 
 async function main(): Promise<void> {
+  if (!ENV.rpcUrl) {
+    throw new Error("Please set OVERHEAT_RPC_URL for the selected network config.");
+  }
   const args = process.argv.slice(2);
   if (args.length > 1) {
     console.error("Usage: wallet-example-evm.ts [output_path]");
