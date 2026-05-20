@@ -26,16 +26,27 @@ export async function buildQuestionInfoFromAccount(
   let explanation = "";
 
   if (rulesId && rulesId.trim().length > 0) {
-    const arweaveData = await fetchQuestionFromArweave(rulesId.trim(), config);
-    rules = arweaveData.rules;
+    try {
+      const arweaveData = await fetchQuestionFromArweave(
+        rulesId.trim(),
+        config
+      );
+      rules = arweaveData.rules;
+    } catch {
+      // Arweave fetch is best-effort; keep default rules on failure.
+    }
   }
 
   if (explanationId && explanationId.trim().length > 0) {
-    const data = await fetchExplanationFromArweave(
-      explanationId.trim(),
-      config
-    );
-    explanation = data.explanation;
+    try {
+      const data = await fetchExplanationFromArweave(
+        explanationId.trim(),
+        config
+      );
+      explanation = data.explanation;
+    } catch {
+      // Arweave fetch is best-effort; keep default explanation on failure.
+    }
   }
 
   const outcomesStr = decodeBytesToString(accountData.outcomes);

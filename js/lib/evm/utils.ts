@@ -32,12 +32,20 @@ export async function attachOffchainMetadata(
   let explanation = q.explanation;
 
   if (rulesIdStr) {
-    rules = (await fetchQuestionFromArweave(rulesIdStr, config)).rules;
+    try {
+      rules = (await fetchQuestionFromArweave(rulesIdStr, config)).rules;
+    } catch {
+      // Arweave fetch is best-effort; keep on-chain/default rules on failure.
+    }
   }
   if (explanationIdStr) {
-    explanation = (
-      await fetchExplanationFromArweave(explanationIdStr, config)
-    ).explanation;
+    try {
+      explanation = (
+        await fetchExplanationFromArweave(explanationIdStr, config)
+      ).explanation;
+    } catch {
+      // Arweave fetch is best-effort; keep on-chain/default explanation on failure.
+    }
   }
 
   return { ...q, rules, explanation };
