@@ -16,13 +16,13 @@ export async function attachOffchainMetadata(
   q: QuestionInfo,
   config: NetworkConfig
 ): Promise<QuestionInfo> {
+  const rawValue = (name: string, index: number) =>
+    raw ? (raw as any)[name] ?? (raw as any)[index] : undefined;
   const rulesIdBytes = raw
-    ? ethers.getBytes((raw as { rules_arweave_id: string }).rules_arweave_id)
+    ? ethers.getBytes(rawValue("rules_arweave_id", 10) as string)
     : new Uint8Array(0);
   const explanationIdBytes = raw
-    ? ethers.getBytes(
-        (raw as { explanation_arweave_id: string }).explanation_arweave_id
-      )
+    ? ethers.getBytes(rawValue("explanation_arweave_id", 9) as string)
     : new Uint8Array(0);
 
   const rulesIdStr = decodeArweaveId(rulesIdBytes);
@@ -50,4 +50,3 @@ export async function attachOffchainMetadata(
 
   return { ...q, rules, explanation };
 }
-

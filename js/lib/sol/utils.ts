@@ -88,7 +88,7 @@ export async function buildQuestionInfoFromAccount(
     outcomes,
     rules,
     answers,
-    earlyResolutionThreshold: accountData.earlyResolutionThreshold ?? 0,
+    earlyResolutionThreshold:
+      Number(accountData.earlyResolutionThresholdBps ?? 0) / 10_000,
   };
 }
-

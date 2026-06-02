@@ -23,16 +23,24 @@ const ERROR_HINTS: Record<string, string> = {
 
 interface RawQuestion {
   authority: string;
+  outcome_count?: bigint;
   created_at: bigint;
+  createdAt?: bigint;
   expected_expiration_time: bigint;
+  expectedExpirationTime?: bigint;
   latest_expiration_time: bigint;
+  latestExpirationTime?: bigint;
   answers: readonly bigint[];
   outcomes: string;
   question_text: string;
+  questionText?: string;
   category: string;
   explanation_arweave_id: string;
+  explanationArweaveId?: string;
   rules_arweave_id: string;
+  rulesArweaveId?: string;
   early_resolution_threshold: bigint;
+  earlyResolutionThreshold?: bigint;
 }
 
 export function parseContractError(
@@ -66,14 +74,20 @@ export function normalizeQuestion(
   raw: RawQuestion | null | undefined,
   address: string
 ): QuestionInfo | null {
-  if (!raw || raw.authority === ethers.ZeroAddress) {
+  const value = (name: keyof RawQuestion, index: number) =>
+    (raw as any)?.[name] ?? (raw as any)?.[index];
+
+  const authority = value("authority", 0) as string | undefined;
+  if (!raw || !authority || authority === ethers.ZeroAddress) {
     return null;
   }
-  const outcomesStr = raw.outcomes ?? "";
+  const outcomesStr = (value("outcomes", 6) as string | undefined) ?? "";
   const outcomesArray = outcomesStr
     ? outcomesStr.split("|").slice(0, MAX_OUTCOMES)
     : [];
-  const rawAnswers = Array.isArray(raw.answers) ? raw.answers : [];
+  const rawAnswers = Array.isArray(value("answers", 5))
+    ? (value("answers", 5) as readonly bigint[])
+    : [];
   const answers: (boolean | null)[] = [];
   for (let i = 0; i < outcomesArray.length && i < rawAnswers.length; i++) {
     const v = Number(rawAnswers[i] ?? -1n);
@@ -86,17 +100,19 @@ export function normalizeQuestion(
     }
   }
   const earlyStr =
-    raw.early_resolution_threshold != null
-      ? ethers.formatEther(raw.early_resolution_threshold)
+    value("early_resolution_threshold", 11) != null
+      ? ethers.formatEther(value("early_resolution_threshold", 11) as bigint)
       : "0";
   return {
     address,
-    authority: raw.authority,
-    createdAt: raw.created_at ?? 0n,
-    expectedExpirationTime: raw.expected_expiration_time ?? 0n,
-    latestExpirationTime: raw.latest_expiration_time ?? 0n,
-    questionText: raw.question_text ?? "",
-    category: raw.category ?? "",
+    authority,
+    createdAt: (value("created_at", 2) as bigint | undefined) ?? 0n,
+    expectedExpirationTime:
+      (value("expected_expiration_time", 3) as bigint | undefined) ?? 0n,
+    latestExpirationTime:
+      (value("latest_expiration_time", 4) as bigint | undefined) ?? 0n,
+    questionText: (value("question_text", 7) as string | undefined) ?? "",
+    category: (value("category", 8) as string | undefined) ?? "",
     explanation: "",
     outcomes: outcomesArray,
     rules: "",

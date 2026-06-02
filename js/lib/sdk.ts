@@ -15,7 +15,7 @@ import {
   uploadExplanationToArweaveWithSol,
   uploadExplanationToArweaveWithEvm,
 } from "./arweave/arweave";
-import { padAnswersToMaxOutcomes } from "./utils/outcomes";
+import { normalizeAnswers } from "./utils/outcomes";
 import type {
   ChainSigner,
   QuestionInfo,
@@ -70,7 +70,7 @@ export const EVM_BASE_SEPOLIA_CONFIG: NetworkConfig = {
   idlFileName: "",
   explorerCluster: "",
   explorerUrl: "https://sepolia.basescan.org",
-  contractAddress: "0x102b3d929227f43Ee3f6b3B10Ab5Dda5306A1a2c",
+  contractAddress: "0x441eb40d5ECD663b6862aa077F655A0d6C4F4Db3",
 };
 
 export class OverheatSDK {
@@ -220,7 +220,7 @@ export class OverheatSDK {
     options: UpdateAnswerOptions
   ): Promise<string> {
     const { questionAddress, answers, explanation } = options;
-    const chainAnswers = padAnswersToMaxOutcomes(answers);
+    const chainAnswers = normalizeAnswers(answers);
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging": {

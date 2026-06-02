@@ -1,6 +1,6 @@
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import { getIdl, encodeArweaveId } from "./types";
+import { getProgramId, getIdl, encodeArweaveId } from "./types";
 import type { NetworkConfig } from "../config";
 
 export async function update_answer(
@@ -23,6 +23,10 @@ export async function update_answer(
 
   const program = new anchor.Program(idl as anchor.Idl, provider);
   const questionPubkey = new PublicKey(questionId);
+  const [adminPda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("admin")],
+    getProgramId(config)
+  );
 
   const explanationIdForAnchor = encodeArweaveId(explanationArweaveId.trim());
 
@@ -30,6 +34,7 @@ export async function update_answer(
     .updateAnswer(answers, explanationIdForAnchor)
     .accounts({
       question: questionPubkey,
+      admin: adminPda,
       authority: wallet.publicKey,
     })
     .rpc();

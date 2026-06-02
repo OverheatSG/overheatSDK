@@ -26,16 +26,10 @@ export function resolveAnswerIndex(answer: string, outcomes: string[]): number {
 }
 
 /**
- * Build per-outcome answers array compatible with on-chain representation.
- *
- * - When answerIndex === -1, all outcomes are left as null (no answer).
- * - When answerIndex >= 0, the chosen outcome is true, other defined
- *   outcomes are false. Remaining slots up to maxOutcomes are null.
+ * Normalize values to boolean | null without changing length.
+ * New contracts require answers.length === outcome_count.
  */
-/**
- * Normalize values to boolean | null, then pad with null to length maxOutcomes (on-chain slot count).
- */
-export function padAnswersToMaxOutcomes(
+export function normalizeAnswers(
   answers: (boolean | null)[],
   maxOutcomes = MAX_OUTCOMES
 ): (boolean | null)[] {
@@ -47,11 +41,11 @@ export function padAnswersToMaxOutcomes(
   const out: (boolean | null)[] = answers.map((v) =>
     v === true || v === false ? v : null
   );
-  while (out.length < maxOutcomes) {
-    out.push(null);
-  }
   return out;
 }
+
+/** @deprecated Use normalizeAnswers. */
+export const padAnswersToMaxOutcomes = normalizeAnswers;
 
 export function buildPerOutcomeAnswers(
   answerIndex: number,
@@ -60,11 +54,12 @@ export function buildPerOutcomeAnswers(
 ): (boolean | null)[] {
   const result: (boolean | null)[] = [];
   const hasAnswer = answerIndex >= 0 && answerIndex < outcomesCount;
-  for (let i = 0; i < maxOutcomes; i++) {
-    if (i >= outcomesCount) {
-      result.push(null);
-      continue;
-    }
+  if (outcomesCount > maxOutcomes) {
+    throw new Error(
+      `outcomesCount must be at most ${maxOutcomes} (got ${outcomesCount})`
+    );
+  }
+  for (let i = 0; i < outcomesCount; i++) {
     if (!hasAnswer) {
       result.push(null);
       continue;
@@ -73,5 +68,4 @@ export function buildPerOutcomeAnswers(
   }
   return result;
 }
-
 

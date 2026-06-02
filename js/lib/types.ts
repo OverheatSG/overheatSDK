@@ -42,7 +42,7 @@ export interface RegisterQuestionParams {
   /**
    * Early resolution threshold, as a floating-point fraction (e.g. 0.5).
    *
-   * On Solana this is passed directly as f64.
+   * On Solana this is converted to basis points (0..10000).
    * On EVM this is converted via ethers.parseEther for fixed-point precision.
    */
   earlyResolutionThreshold: number;
@@ -55,9 +55,9 @@ export interface RegisterQuestionResult {
 
 export interface UpdateAnswerOptions {
   questionAddress: string;
-  /**
+   /**
    * Per-outcome resolution (same semantics as {@link QuestionInfo.answers}).
-   * Pass only the slots you need (length ≤ MAX_OUTCOMES); SDK pads with null to full on-chain length.
+   * Must match the question's outcome count; SDK does not pad to MAX_OUTCOMES.
    */
   answers: (boolean | null)[];
   /** Human-readable explanation text; will be uploaded to Arweave and only the ID is stored on-chain. */
