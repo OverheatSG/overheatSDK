@@ -1,4 +1,9 @@
-import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG,SOL_STAGING_CONFIG,SOL_DEVNET_CONFIG } from "overheat-sdk";
+import {
+  OverheatSDK,
+  EVM_BASE_SEPOLIA_CONFIG,
+  SOL_STAGING_CONFIG,
+  SOL_DEVNET_CONFIG,
+} from "overheat-sdk";
 
 const ENV = {
   ...SOL_DEVNET_CONFIG,
@@ -27,4 +32,3 @@ async function main(): Promise<void> {
 }
 
 void main();
-
