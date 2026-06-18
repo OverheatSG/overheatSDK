@@ -85,6 +85,13 @@ Use one of the built‑in configs or your own `NetworkConfig`:
 - EVM:
   - `EVM_BASE_SEPOLIA_CONFIG`
 
+Current default deployment addresses:
+
+- `SOL_DEVNET_CONFIG` / `SOL_STAGING_CONFIG`
+  - Solana devnet program: `EAidGGxkVhCW7RryYv9vfUwRhyPpNCf7LWzfKfRJBAnG`
+- `EVM_BASE_SEPOLIA_CONFIG`
+  - Base Sepolia contract: `0x41AB5B380C351801901C2415ba549dEac43D3E16`
+
 You can also construct a custom `NetworkConfig`:
 
 ```ts
@@ -275,4 +282,3 @@ See the root `examples/` folder:
 - `examples/cli/` – CLI tools using `process.argv`.
 
 They are the best reference for real‑world usage patterns of this SDK.
-

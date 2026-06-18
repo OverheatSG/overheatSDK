@@ -13,6 +13,15 @@ The Overheat SDK provides a complete interface for interacting with the Overheat
 - **Multi-network Support**: Works with Solana devnet/staging and EVM Base Sepolia
 - **Wallet Utilities**: Simple helpers to generate, load, and save wallets
 
+## Current Default Deployments
+
+The built-in configs in this package point to the latest devnet/testnet deployments:
+
+- `SOL_DEVNET_CONFIG` / `SOL_STAGING_CONFIG`
+  - Solana devnet program: `EAidGGxkVhCW7RryYv9vfUwRhyPpNCf7LWzfKfRJBAnG`
+- `EVM_BASE_SEPOLIA_CONFIG`
+  - Base Sepolia contract: `0x41AB5B380C351801901C2415ba549dEac43D3E16`
+
 ## Installation
 
 ### Using npm
