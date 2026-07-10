@@ -1,0 +1,509 @@
+{
+  "address": "BsciazohjvW5gg6MQdSpxYeoakh7bVWya7EA3WgQLj6r",
+  "metadata": {
+    "name": "overheat",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "initialize_admin",
+      "discriminator": [
+        35,
+        176,
+        8,
+        143,
+        42,
+        160,
+        61,
+        158
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  100,
+                  109,
+                  105,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "program"
+        },
+        {
+          "name": "program_data"
+        },
+        {
+          "name": "upgrade_authority",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "admin_authority",
+          "type": "pubkey"
+        },
+        {
+          "name": "answer_updater",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "register_question",
+      "discriminator": [
+        85,
+        24,
+        110,
+        154,
+        208,
+        91,
+        3,
+        75
+      ],
+      "accounts": [
+        {
+          "name": "question",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  113,
+                  117,
+                  101,
+                  115,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "arg",
+                "path": "question_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  100,
+                  109,
+                  105,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "question_id",
+          "type": "bytes"
+        },
+        {
+          "name": "question_text",
+          "type": "string"
+        },
+        {
+          "name": "expected_expiration_time",
+          "type": "i64"
+        },
+        {
+          "name": "latest_expiration_time",
+          "type": "i64"
+        },
+        {
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "name": "outcomes",
+          "type": "string"
+        },
+        {
+          "name": "rules_arweave_id",
+          "type": "bytes"
+        },
+        {
+          "name": "early_resolution_threshold_bps",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "update_admin_config",
+      "discriminator": [
+        203,
+        128,
+        67,
+        229,
+        244,
+        117,
+        194,
+        43
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  100,
+                  109,
+                  105,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin_authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "admin_authority",
+          "type": "pubkey"
+        },
+        {
+          "name": "answer_updater",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "update_answer",
+      "discriminator": [
+        172,
+        127,
+        30,
+        84,
+        31,
+        208,
+        56,
+        16
+      ],
+      "accounts": [
+        {
+          "name": "question",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  100,
+                  109,
+                  105,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "answers",
+          "type": {
+            "vec": {
+              "option": "bool"
+            }
+          }
+        },
+        {
+          "name": "explanation_arweave_id",
+          "type": "bytes"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "AdminConfig",
+      "discriminator": [
+        156,
+        10,
+        79,
+        161,
+        71,
+        9,
+        62,
+        77
+      ]
+    },
+    {
+      "name": "Question",
+      "discriminator": [
+        111,
+        22,
+        150,
+        220,
+        181,
+        122,
+        118,
+        127
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized"
+    },
+    {
+      "code": 6001,
+      "name": "QuestionTooLong",
+      "msg": "Question text too long"
+    },
+    {
+      "code": 6002,
+      "name": "CategoryTooLong",
+      "msg": "Category too long"
+    },
+    {
+      "code": 6003,
+      "name": "OutcomesTooLong",
+      "msg": "Outcomes too long"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidArweaveId",
+      "msg": "Invalid Arweave ID length"
+    },
+    {
+      "code": 6005,
+      "name": "InvalidExpirationTime",
+      "msg": "Invalid expiration time"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidEarlyResolutionThreshold",
+      "msg": "Invalid early resolution threshold"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidQuestionId",
+      "msg": "Invalid question ID"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidOutcomes",
+      "msg": "Invalid outcomes"
+    },
+    {
+      "code": 6009,
+      "name": "InvalidAnswers",
+      "msg": "Invalid answers"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidAdminConfig",
+      "msg": "Invalid admin config"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidProgramData",
+      "msg": "Invalid program data account"
+    }
+  ],
+  "types": [
+    {
+      "name": "AdminConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "version",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "admin_authority",
+            "docs": [
+              "A plain signer, Squads/Realms governance PDA, or any external multisig authority."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "answer_updater",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Question",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "version",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "outcome_count",
+            "type": "u8"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "question_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "expected_expiration_time",
+            "type": "i64"
+          },
+          {
+            "name": "latest_expiration_time",
+            "type": "i64"
+          },
+          {
+            "name": "early_resolution_threshold_bps",
+            "docs": [
+              "Basis points in the inclusive range 0..=10_000."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "answers",
+            "type": {
+              "array": [
+                {
+                  "option": "bool"
+                },
+                32
+              ]
+            }
+          },
+          {
+            "name": "outcomes",
+            "type": {
+              "array": [
+                "u8",
+                500
+              ]
+            }
+          },
+          {
+            "name": "question_text",
+            "type": {
+              "array": [
+                "u8",
+                300
+              ]
+            }
+          },
+          {
+            "name": "category",
+            "type": {
+              "array": [
+                "u8",
+                100
+              ]
+            }
+          },
+          {
+            "name": "explanation_arweave_id",
+            "type": {
+              "array": [
+                "u8",
+                44
+              ]
+            }
+          },
+          {
+            "name": "rules_arweave_id",
+            "type": {
+              "array": [
+                "u8",
+                44
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

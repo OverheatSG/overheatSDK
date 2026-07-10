@@ -2,6 +2,7 @@ export {
   OverheatSDK,
   SOL_DEVNET_CONFIG,
   SOL_STAGING_CONFIG,
+  SOL_MAINNET_CONFIG,
   EVM_BASE_SEPOLIA_CONFIG,
 } from "./lib/sdk";
 export type {

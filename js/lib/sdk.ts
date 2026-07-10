@@ -61,6 +61,17 @@ export const SOL_STAGING_CONFIG: NetworkConfig = {
   explorerUrl: "https://explorer.solana.com",
 };
 
+export const SOL_MAINNET_CONFIG: NetworkConfig = {
+  network: "sol-mainnet",
+  rpcUrl: "",
+  wsUrl: "",
+  irysNode: "https://node1.irys.xyz",
+  irysGateway: "https://gateway.irys.xyz",
+  idlFileName: "overheat-mainnet.json",
+  explorerCluster: "mainnet-beta",
+  explorerUrl: "https://explorer.solana.com",
+};
+
 export const EVM_BASE_SEPOLIA_CONFIG: NetworkConfig = {
   network: "evm-base-sepolia",
   rpcUrl: "",
@@ -84,6 +95,7 @@ export class OverheatSDK {
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging":
+      case "sol-mainnet":
         const { solWallet } = sol.loadWallet(walletPath);
         return { chain: "solana" as const, wallet: solWallet };
       case "evm-base-sepolia":
@@ -98,6 +110,7 @@ export class OverheatSDK {
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging":
+      case "sol-mainnet":
         const { solWallet } = sol.loadWalletFromEnvValue(envValue);
         return { chain: "solana" as const, wallet: solWallet };
       case "evm-base-sepolia":
@@ -112,6 +125,7 @@ export class OverheatSDK {
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging":
+      case "sol-mainnet":
         return sol.get_all_questions(this.config);
       case "evm-base-sepolia":
         return evm.get_all_questions(this.config);
@@ -124,6 +138,7 @@ export class OverheatSDK {
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging":
+      case "sol-mainnet":
         return sol.get_question_by_address(questionId, this.config);
       case "evm-base-sepolia":
         return evm.get_question_by_address(questionId, this.config);
@@ -143,6 +158,7 @@ export class OverheatSDK {
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging":
+      case "sol-mainnet":
         return sol.get_questions_by_time_range(this.config, timeRange);
       case "evm-base-sepolia":
         return evm.get_questions_by_time_range(this.config, timeRange);
@@ -167,7 +183,8 @@ export class OverheatSDK {
 
     switch (this.config.network) {
       case "sol-devnet":
-      case "sol-staging": {
+      case "sol-staging":
+      case "sol-mainnet": {
         if (signer.chain !== "solana") {
           throw new Error(
             `Network is ${this.config.network} but signer is ${signer.chain}. Use a Solana wallet.`
@@ -223,7 +240,8 @@ export class OverheatSDK {
     const chainAnswers = normalizeAnswers(answers);
     switch (this.config.network) {
       case "sol-devnet":
-      case "sol-staging": {
+      case "sol-staging":
+      case "sol-mainnet": {
         if (signer.chain !== "solana") {
           throw new Error(
             `Network is ${this.config.network} but signer is ${signer.chain}. Use a Solana wallet.`

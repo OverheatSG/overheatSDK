@@ -10,15 +10,17 @@ The Overheat SDK provides a complete interface for interacting with the Overheat
 - **Answer Updates**: Update question answers with explanations
 - **Data Retrieval**: Query questions by address, time range, or get all questions
 - **Question interpretation**: Call the Overheat HTTP API to analyze ambiguity in a market spec (requires gateway credentials)
-- **Multi-network Support**: Works with Solana devnet/staging and EVM Base Sepolia
+- **Multi-network Support**: Works with Solana devnet/staging/mainnet and EVM Base Sepolia
 - **Wallet Utilities**: Simple helpers to generate, load, and save wallets
 
 ## Current Default Deployments
 
-The built-in configs in this package point to the latest devnet/testnet deployments:
+The built-in configs in this package point to the following deployments:
 
 - `SOL_DEVNET_CONFIG` / `SOL_STAGING_CONFIG`
   - Solana devnet program: `EAidGGxkVhCW7RryYv9vfUwRhyPpNCf7LWzfKfRJBAnG`
+- `SOL_MAINNET_CONFIG`
+  - Solana mainnet program: `BsciazohjvW5gg6MQdSpxYeoakh7bVWya7EA3WgQLj6r`
 - `EVM_BASE_SEPOLIA_CONFIG`
   - Base Sepolia contract: `0x41AB5B380C351801901C2415ba549dEac43D3E16`
 
@@ -59,7 +61,7 @@ void main();
 
 ### Wallet utilities (high level)
 
-- **Solana (`sol-devnet` / `sol-staging`)**
+- **Solana (`sol-devnet` / `sol-staging` / `sol-mainnet`)**
   - `generateWallet()` – Generate a new keypair and return `{ solWallet, solKeypair }`.
   - `loadWallet(walletPath)` – Load a keypair from JSON file and return `{ solWallet, solKeypair }`.
   - `saveWallet(wallet, walletPath)` – Save an Anchor wallet to a JSON keypair file.
