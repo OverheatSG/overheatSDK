@@ -11,9 +11,9 @@
   ],
   "scripts": {
     "build": "tsc && npm run copy-json",
-    "copy-json": "mkdir -p dist/lib dist/lib/evm dist/lib/sol && cp lib/sol/*.json dist/lib/sol/ 2>/dev/null || true && cp lib/evm/*.json dist/lib/evm/ 2>/dev/null || true",
+    "copy-json": "node scripts/copy-json.js",
     "prepublishOnly": "npm run build",
-    "clean": "rm -rf dist"
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "keywords": [
     "solana",
