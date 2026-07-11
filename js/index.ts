@@ -4,6 +4,7 @@ export {
   SOL_STAGING_CONFIG,
   SOL_MAINNET_CONFIG,
   EVM_BASE_SEPOLIA_CONFIG,
+  EVM_BASE_MAINNET_CONFIG,
 } from "./lib/sdk";
 export type {
   RegisterQuestionResult,
