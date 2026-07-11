@@ -61,6 +61,17 @@ export const SOL_STAGING_CONFIG: NetworkConfig = {
   explorerUrl: "https://explorer.solana.com",
 };
 
+export const SOL_MAINNET_CONFIG: NetworkConfig = {
+  network: "sol-mainnet",
+  rpcUrl: "",
+  wsUrl: "",
+  irysNode: "https://node1.irys.xyz",
+  irysGateway: "https://gateway.irys.xyz",
+  idlFileName: "overheat-mainnet.json",
+  explorerCluster: "mainnet-beta",
+  explorerUrl: "https://explorer.solana.com",
+};
+
 export const EVM_BASE_SEPOLIA_CONFIG: NetworkConfig = {
   network: "evm-base-sepolia",
   rpcUrl: "",
@@ -71,6 +82,18 @@ export const EVM_BASE_SEPOLIA_CONFIG: NetworkConfig = {
   explorerCluster: "",
   explorerUrl: "https://sepolia.basescan.org",
   contractAddress: "0x41AB5B380C351801901C2415ba549dEac43D3E16",
+};
+
+export const EVM_BASE_MAINNET_CONFIG: NetworkConfig = {
+  network: "evm-base-mainnet",
+  rpcUrl: "",
+  wsUrl: "",
+  irysNode: "https://node1.irys.xyz",
+  irysGateway: "https://gateway.irys.xyz",
+  idlFileName: "",
+  explorerCluster: "",
+  explorerUrl: "https://basescan.org",
+  contractAddress: "0xdE0955a06cC72dc84d84d171BAEC09d3c209944B",
 };
 
 export class OverheatSDK {
@@ -84,9 +107,11 @@ export class OverheatSDK {
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging":
+      case "sol-mainnet":
         const { solWallet } = sol.loadWallet(walletPath);
         return { chain: "solana" as const, wallet: solWallet };
       case "evm-base-sepolia":
+      case "evm-base-mainnet":
         const { privateKey } = evm.loadWallet(walletPath);
         return { chain: "evm" as const, privateKeyHex: privateKey };
       default:
@@ -98,9 +123,11 @@ export class OverheatSDK {
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging":
+      case "sol-mainnet":
         const { solWallet } = sol.loadWalletFromEnvValue(envValue);
         return { chain: "solana" as const, wallet: solWallet };
       case "evm-base-sepolia":
+      case "evm-base-mainnet":
         const { privateKey } = evm.loadWalletFromEnvValue(envValue);
         return { chain: "evm" as const, privateKeyHex: privateKey };
       default:
@@ -112,8 +139,10 @@ export class OverheatSDK {
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging":
+      case "sol-mainnet":
         return sol.get_all_questions(this.config);
       case "evm-base-sepolia":
+      case "evm-base-mainnet":
         return evm.get_all_questions(this.config);
       default:
         throw new Error(`Unsupported network: ${this.config.network}`);
@@ -124,8 +153,10 @@ export class OverheatSDK {
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging":
+      case "sol-mainnet":
         return sol.get_question_by_address(questionId, this.config);
       case "evm-base-sepolia":
+      case "evm-base-mainnet":
         return evm.get_question_by_address(questionId, this.config);
       default:
         throw new Error(`Unsupported network: ${this.config.network}`);
@@ -143,8 +174,10 @@ export class OverheatSDK {
     switch (this.config.network) {
       case "sol-devnet":
       case "sol-staging":
+      case "sol-mainnet":
         return sol.get_questions_by_time_range(this.config, timeRange);
       case "evm-base-sepolia":
+      case "evm-base-mainnet":
         return evm.get_questions_by_time_range(this.config, timeRange);
       default:
         throw new Error(`Unsupported network: ${this.config.network}`);
@@ -167,7 +200,8 @@ export class OverheatSDK {
 
     switch (this.config.network) {
       case "sol-devnet":
-      case "sol-staging": {
+      case "sol-staging":
+      case "sol-mainnet": {
         if (signer.chain !== "solana") {
           throw new Error(
             `Network is ${this.config.network} but signer is ${signer.chain}. Use a Solana wallet.`
@@ -187,7 +221,8 @@ export class OverheatSDK {
         );
         return { questionAddress: r.questionId, txHash: r.transaction };
       }
-      case "evm-base-sepolia": {
+      case "evm-base-sepolia":
+      case "evm-base-mainnet": {
         if (signer.chain !== "evm") {
           throw new Error(
             `Network is ${this.config.network} but signer is ${signer.chain}. Use an EVM signer.`
@@ -223,7 +258,8 @@ export class OverheatSDK {
     const chainAnswers = normalizeAnswers(answers);
     switch (this.config.network) {
       case "sol-devnet":
-      case "sol-staging": {
+      case "sol-staging":
+      case "sol-mainnet": {
         if (signer.chain !== "solana") {
           throw new Error(
             `Network is ${this.config.network} but signer is ${signer.chain}. Use a Solana wallet.`
@@ -244,7 +280,8 @@ export class OverheatSDK {
         );
         return r.transaction;
       }
-      case "evm-base-sepolia": {
+      case "evm-base-sepolia":
+      case "evm-base-mainnet": {
         if (signer.chain !== "evm") {
           throw new Error(
             `Network is ${this.config.network} but signer is ${signer.chain}. Use an EVM signer.`

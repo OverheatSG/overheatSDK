@@ -17,7 +17,9 @@ From `overheat-sdk`:
 - **Built‑in network configs**
   - `SOL_DEVNET_CONFIG`
   - `SOL_STAGING_CONFIG`
+  - `SOL_MAINNET_CONFIG`
   - `EVM_BASE_SEPOLIA_CONFIG`
+  - `EVM_BASE_MAINNET_CONFIG`
 - **Types**
   - `ChainSigner`
   - `QuestionInfo`
@@ -82,15 +84,21 @@ Use one of the built‑in configs or your own `NetworkConfig`:
 - Solana:
   - `SOL_DEVNET_CONFIG`
   - `SOL_STAGING_CONFIG`
+  - `SOL_MAINNET_CONFIG`
 - EVM:
   - `EVM_BASE_SEPOLIA_CONFIG`
+  - `EVM_BASE_MAINNET_CONFIG`
 
 Current default deployment addresses:
 
 - `SOL_DEVNET_CONFIG` / `SOL_STAGING_CONFIG`
   - Solana devnet program: `EAidGGxkVhCW7RryYv9vfUwRhyPpNCf7LWzfKfRJBAnG`
+- `SOL_MAINNET_CONFIG`
+  - Solana mainnet program: `BsciazohjvW5gg6MQdSpxYeoakh7bVWya7EA3WgQLj6r`
 - `EVM_BASE_SEPOLIA_CONFIG`
   - Base Sepolia contract: `0x41AB5B380C351801901C2415ba549dEac43D3E16`
+- `EVM_BASE_MAINNET_CONFIG`
+  - Base mainnet contract: `0xdE0955a06cC72dc84d84d171BAEC09d3c209944B`
 
 You can also construct a custom `NetworkConfig`:
 
