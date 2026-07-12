@@ -65,7 +65,8 @@ void main();
 
 - **Solana (`sol-devnet` / `sol-staging` / `sol-mainnet`)**
   - `generateWallet()` – Generate a new keypair and return `{ solWallet, solKeypair }`.
-  - `loadWallet(walletPath)` – Load a keypair from JSON file and return `{ solWallet, solKeypair }`.
+  - `loadWallet(walletPath)` – Load a keypair from file and return `{ solWallet, solKeypair }`. Accepts either a JSON byte array (`[12,34,...]`, the Solana CLI format) or a base58-encoded secret key (the Phantom "export private key" format).
+  - `loadWalletFromEnvValue(value)` – Same as `loadWallet` but reads the key from a string (e.g. an env var) instead of a file; accepts both formats.
   - `saveWallet(wallet, walletPath)` – Save an Anchor wallet to a JSON keypair file.
 
 - **EVM (`evm-base-sepolia` / `evm-base-mainnet`)**
