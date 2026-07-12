@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { question_interpretation } from "overheat-sdk";
+import { question_interpretation } from "@overheat-oracle/sdk";
 
 const question = "Will BTC trade above $100k by 2030-02-01?";
 const outcomes = ["Yes", "No"];

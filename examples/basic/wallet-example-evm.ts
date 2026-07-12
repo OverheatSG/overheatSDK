@@ -2,7 +2,7 @@ import * as path from "path";
 import { Wallet } from "ethers";
 import {
   evm,
-} from "overheat-sdk";
+} from "@overheat-oracle/sdk";
 
 const OUT_PATH = path.join(process.cwd(), "example-evm-key.key");
 

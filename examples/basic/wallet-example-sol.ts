@@ -3,7 +3,7 @@ import {
   generateWallet,
   saveWallet,
   loadWallet,
-} from "overheat-sdk";
+} from "@overheat-oracle/sdk";
 
 const OUT_PATH = path.join(process.cwd(), "example-sol-key.key");
 

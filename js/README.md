@@ -1,16 +1,16 @@
-# overheat-sdk (JS package)
+# @overheat-oracle/sdk (JS package)
 
 TypeScript SDK for the Overheat oracle on **Solana** and **EVM**. This package exposes a class‑based, network‑aware API with no global state.
 
 ## Installation
 
 ```bash
-npm install overheat-sdk
+npm install @overheat-oracle/sdk
 ```
 
 ## Core Exports
 
-From `overheat-sdk`:
+From `@overheat-oracle/sdk`:
 
 - **Class**
   - `OverheatSDK`
@@ -47,7 +47,7 @@ import type {
   TimeRangeFilter,
   UpdateAnswerOptions,
   NetworkConfig,
-} from "overheat-sdk";
+} from "@overheat-oracle/sdk";
 
 class OverheatSDK {
   readonly config: NetworkConfig;
@@ -136,7 +136,7 @@ import {
   evm,
   type ChainSigner,
   type RegisterQuestionParams,
-} from "overheat-sdk";
+} from "@overheat-oracle/sdk";
 
 async function main() {
   const sdk = new OverheatSDK({ config: EVM_BASE_SEPOLIA_CONFIG });
@@ -170,7 +170,7 @@ import {
   SOL_DEVNET_CONFIG,
   loadWallet,
   type ChainSigner,
-} from "overheat-sdk";
+} from "@overheat-oracle/sdk";
 
 async function main() {
   const sdk = new OverheatSDK({ config: SOL_DEVNET_CONFIG });
@@ -201,7 +201,7 @@ Server-side or API-key access: pass `apiSecret: { secretId, secretKey }` so the 
 import {
   question_interpretation,
   type QuestionInterpretationRequest,
-} from "overheat-sdk";
+} from "@overheat-oracle/sdk";
 
 const payload: QuestionInterpretationRequest = {
   question: "Will BTC trade above $100k by 2030-02-01?",
@@ -223,7 +223,7 @@ With `OverheatSDK`, the same payload and options are passed to `sdk.questionInte
 
 ## Types (summary)
 
-All core types live in `js/lib/types.ts` and are re‑exported from `overheat-sdk`:
+All core types live in `js/lib/types.ts` and are re‑exported from `@overheat-oracle/sdk`:
 
 - `QuestionInfo`
 - `RegisterQuestionParams`
@@ -238,10 +238,10 @@ They are already used in the method signatures of `OverheatSDK`.
 If you need more control, you can use the low‑level sol/evm modules:
 
 ```ts
-import { sol, evm } from "overheat-sdk"; // via index.ts exports
+import { sol, evm } from "@overheat-oracle/sdk"; // via index.ts exports
 // or
-import * as solMod from "overheat-sdk/lib/sol";
-import * as evmMod from "overheat-sdk/lib/evm";
+import * as solMod from "@overheat-oracle/sdk/lib/sol";
+import * as evmMod from "@overheat-oracle/sdk/lib/evm";
 ```
 
 Examples:

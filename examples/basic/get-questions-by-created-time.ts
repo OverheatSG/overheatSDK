@@ -2,7 +2,7 @@ import {
   OverheatSDK,
   EVM_BASE_SEPOLIA_CONFIG,SOL_STAGING_CONFIG,SOL_DEVNET_CONFIG,
   type TimeRangeFilter,
-} from "overheat-sdk";
+} from "@overheat-oracle/sdk";
 
 const ENV = {
   ...SOL_DEVNET_CONFIG,

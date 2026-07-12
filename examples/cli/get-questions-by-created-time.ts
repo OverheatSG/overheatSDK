@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG, type TimeRangeFilter } from "overheat-sdk";
+import { OverheatSDK, EVM_BASE_SEPOLIA_CONFIG, type TimeRangeFilter } from "@overheat-oracle/sdk";
 
 const ENV = {
   ...EVM_BASE_SEPOLIA_CONFIG,

@@ -31,7 +31,7 @@ The built-in configs in this package point to the following deployments:
 ### Using npm
 
 ```bash
-npm install overheat-sdk
+npm install @overheat-oracle/sdk
 ```
 
 ## Quick Start
@@ -40,7 +40,7 @@ npm install overheat-sdk
 import {
   OverheatSDK,
   EVM_BASE_SEPOLIA_CONFIG,
-} from "overheat-sdk";
+} from "@overheat-oracle/sdk";
 
 async function main() {
   // 1. Create SDK with a built-in network config
@@ -117,7 +117,7 @@ The example scripts demonstrate how to use the SDK in two styles:
 ### Setup
 
 ```bash
-# Install dependencies (the examples depend on the published npm package `overheat-sdk`)
+# Install dependencies (the examples depend on the published npm package `@overheat-oracle/sdk`)
 npm install
 ```
 
