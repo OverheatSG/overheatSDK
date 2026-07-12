@@ -261,7 +261,8 @@ Examples:
 
 ### Solana (`sol/wallet.ts`)
 
-- `loadWallet(path)` → `{ solWallet, solKeypair }`
+- `loadWallet(path)` → `{ solWallet, solKeypair }` — file may hold a JSON byte array (`[12,34,...]`) or a base58-encoded secret key
+- `loadWalletFromEnvValue(value)` → `{ solWallet, solKeypair }` — same, from a string (e.g. env var) instead of a file
 - `generateWallet()` → `{ solWallet, solKeypair }`
 - `saveWallet(wallet, path)` → void
 
