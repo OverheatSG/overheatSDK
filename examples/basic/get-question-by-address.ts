@@ -3,7 +3,7 @@ import {
   EVM_BASE_SEPOLIA_CONFIG,
   SOL_STAGING_CONFIG,
   SOL_DEVNET_CONFIG,
-} from "overheat-sdk";
+} from "@overheat-oracle/sdk";
 
 const ENV = {
   ...EVM_BASE_SEPOLIA_CONFIG,

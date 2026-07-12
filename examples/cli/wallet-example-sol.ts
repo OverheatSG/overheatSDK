@@ -19,7 +19,7 @@ import {
   generateWallet,
   saveWallet,
   loadWallet,
-} from "overheat-sdk";
+} from "@overheat-oracle/sdk";
 
 const ENV = {
   ...SOL_DEVNET_CONFIG,

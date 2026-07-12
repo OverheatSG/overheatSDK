@@ -1,7 +1,7 @@
 {
   "name": "overheat-sdk-examples",
   "version": "1.0.0",
-  "description": "Examples for overheat-sdk",
+  "description": "Examples for @overheat-oracle/sdk",
   "private": true,
   "scripts": {
     "example:basic:get-all": "ts-node examples/basic/get-all-questions.ts",
@@ -21,7 +21,7 @@
     "example:cli:wallet-evm": "ts-node examples/cli/wallet-example-evm.ts"
   },
   "dependencies": {
-    "overheat-sdk": "^0.2.11"
+    "@overheat-oracle/sdk": "^0.2.12"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
